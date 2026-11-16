@@ -1,0 +1,28 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+staticfiles/
+media/
+.pytest_cache/
+.coverage
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+android/local.properties
+ios/Pods/
+ios/.symlinks/
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
