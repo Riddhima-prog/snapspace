@@ -9,6 +9,8 @@ from rest_framework import generics,permissions,status,viewsets
 from django.db.models import Q, Max
 from django.utils import timezone
 from django.conf import settings
+import hashlib
+import time
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -173,12 +175,23 @@ class NotificationList(generics.ListAPIView):
 
 
 class UploadConfigView(APIView):
-    """Expose only the public Cloudinary unsigned-upload configuration."""
+    """Expose public Cloudinary identifiers only; never return the API secret."""
     def get(self, request):
         return Response({
             "cloud_name": settings.CLOUDINARY_CLOUD_NAME,
-            "upload_preset": settings.CLOUDINARY_UPLOAD_PRESET,
+            "api_key": settings.CLOUDINARY_API_KEY,
         })
+
+
+class UploadSignatureView(APIView):
+    def post(self, request):
+        if not all((settings.CLOUDINARY_CLOUD_NAME, settings.CLOUDINARY_API_KEY, settings.CLOUDINARY_API_SECRET)):
+            return Response({"detail": "Cloud media storage is not configured yet."}, status=503)
+        timestamp = int(time.time())
+        folder = "snapspace"
+        to_sign = f"folder={folder}&timestamp={timestamp}"
+        signature = hashlib.sha1((to_sign + settings.CLOUDINARY_API_SECRET).encode("utf-8")).hexdigest()
+        return Response({"timestamp": timestamp, "folder": folder, "signature": signature})
 
 
 class StoriesView(APIView):
