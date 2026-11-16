@@ -339,19 +339,25 @@ function createPost() {
 
 function searchContent() {
   const query = document.getElementById("search").value.toLowerCase().trim();
-  const posts = document.querySelectorAll("#feed .post");
+
+  const posts = document.querySelectorAll(".post");
   let visible = 0;
 
   posts.forEach(post => {
-    const username = post.querySelector(".post-header").textContent.toLowerCase();
-    const caption = post.querySelector(".post-info").textContent.toLowerCase();
-
-    const match = username.includes(query) || caption.includes(query);
+    const text = post.textContent.toLowerCase();
+    const match = text.includes(query);
 
     post.style.display = match ? "" : "none";
 
     if (match) visible++;
   });
+
+  const noResults = document.getElementById("noResults");
+
+  if (noResults) {
+    noResults.classList.toggle("hidden", visible > 0);
+  }
+}
 
   const noResults = document.getElementById("noResults");
   noResults.classList.toggle("hidden", visible > 0);
