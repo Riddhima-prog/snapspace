@@ -1,0 +1,28 @@
+databases:
+  - name: snapspace-db
+    plan: free
+    databaseName: snapspace
+    user: snapspace
+
+services:
+  - type: web
+    name: snapspace-web
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: bash build.sh
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/health/
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: snapspace-db
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: localhost,127.0.0.1
+      - key: EMAIL_BACKEND
+        value: django.core.mail.backends.console.EmailBackend
