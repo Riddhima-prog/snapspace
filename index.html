@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnapSpace | Share Your Moments</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #fafafa;
+  color: #262626;
+}
+
+.navbar {
+  height: 65px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+  color: #d94682;
+}
+
+.search {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.nav-links {
+  display: flex;
+  gap: 22px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.container {
+  max-width: 950px;
+  margin: 30px auto;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 30px;
+  padding: 0 15px;
+}
+
+.stories, .post, .suggestions {
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+}
+
+.stories {
+  display: flex;
+  gap: 18px;
+  padding: 18px;
+  overflow-x: auto;
+  margin-bottom: 22px;
+}
+
+.story {
+  text-align: center;
+  font-size: 12px;
+  min-width: 60px;
+}
+
+.story img {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 3px solid #e84393;
+  padding: 2px;
+  object-fit: cover;
+  margin-bottom: 5px;
+}
+
+.post {
+  margin-bottom: 25px;
+  overflow: hidden;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  font-weight: bold;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-image {
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  display: block;
+}
+
+.actions {
+  padding: 12px 15px;
+  font-size: 25px;
+}
+
+.actions span {
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.liked {
+  color: #ed315b;
+}
+
+.post-info {
+  padding: 0 15px 15px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.comment-box {
+  display: flex;
+  border-top: 1px solid #eee;
+  padding: 12px;
+  gap: 8px;
+}
+
+.comment-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.comment-box button {
+  background: none;
+  color: #d94682;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.sidebar {
+  padding: 15px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.profile img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.suggestions {
+  padding: 15px;
+}
+
+.suggestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  font-size: 13px;
+}
+
+.follow {
+  color: #d94682;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+h4 {
+  color: #888;
+}
+
+@media(max-width: 700px) {
+  .container {
+    display: block;
+    max-width: 500px;
+  }
+  .sidebar, .search {
+    display: none;
+  }
+  .navbar {
+    justify-content: space-around;
+  }
+  .nav-links {
+    gap: 14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">SnapSpace.</div>
+  <input class="search" placeholder="Search">
+  <div class="nav-links">
+    <span title="Home">⌂</span>
+    <span title="Explore">🔍</span>
+    <span title="Messages">✉</span>
+    <span title="Profile">👤</span>
+  </div>
+</header>
+
+<div class="container">
+
+<main>
+
+<section class="stories">
+  <div class="story">
+    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+    Your story
+  </div>
+  <div class="story">
+    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">
+    Rahul
+  </div>
+  <div class="story">
+    <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100">
+    Priya
+  </div>
+  <div class="story">
+    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">
+    Aman
+  </div>
+  <div class="story">
+    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100">
+    Neha
+  </div>
+</section>
+
+<div id="feed">
+
+<article class="post">
+  <div class="post-header">
+    <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">
+    rahul_photography
+  </div>
+  <img class="post-image" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900">
+  <div class="actions">
+    <span class="like" onclick="likePost(this)">♡</span>
+    <span onclick="focusComment(this)">♧</span>
+    <span>➤</span>
+  </div>
+  <div class="post-info">
+    <b class="likes">120 likes</b>
+    <p><b>rahul_photography</b> Finding peace in little moments 🌿</p>
+    <div class="comments"></div>
+  </div>
+  <div class="comment-box">
+    <input placeholder="Add a comment...">
+    <button onclick="addComment(this)">Post</button>
+  </div>
+</article>
+
+<article class="post">
+  <div class="post-header">
+    <img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+    priya_diaries
+  </div>
+  <img class="post-image" src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900">
+  <div class="actions">
+    <span class="like" onclick="likePost(this)">♡</span>
+    <span onclick="focusComment(this)">♧</span>
+    <span>➤</span>
+  </div>
+  <div class="post-info">
+    <b class="likes">245 likes</b>
+    <p><b>priya_diaries</b> Golden hour hits differently ✨</p>
+    <div class="comments"></div>
+  </div>
+  <div class="comment-box">
+    <input placeholder="Add a comment...">
+    <button onclick="addComment(this)">Post</button>
+  </div>
+</article>
+
+<article class="post">
+  <div class="post-header">
+    <img class="avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">
+    aman.travels
+  </div>
+  <img class="post-image" src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900">
+  <div class="actions">
+    <span class="like" onclick="likePost(this)">♡</span>
+    <span onclick="focusComment(this)">♧</span>
+    <span>➤</span>
+  </div>
+  <div class="post-info">
+    <b class="likes">89 likes</b>
+    <p><b>aman.travels</b> Somewhere between the mountains 🏔️</p>
+    <div class="comments"></div>
+  </div>
+  <div class="comment-box">
+    <input placeholder="Add a comment...">
+    <button onclick="addComment(this)">Post</button>
+  </div>
+</article>
+
+</div>
+</main>
+
+<aside class="sidebar">
+  <div class="profile">
+    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+    <div>
+      <b>your_username</b>
+      <p style="color:gray;font-size:13px">Welcome to SnapSpace!</p>
+    </div>
+  </div>
+
+  <section class="suggestions">
+    <h4>Suggested for you</h4>
+    <div class="suggestion">
+      <b>travel_diary</b>
+      <span class="follow" onclick="followUser(this)">Follow</span>
+    </div>
+    <div class="suggestion">
+      <b>foodie_world</b>
+      <span class="follow" onclick="followUser(this)">Follow</span>
+    </div>
+    <div class="suggestion">
+      <b>daily_vibes</b>
+      <span class="follow" onclick="followUser(this)">Follow</span>
+    </div>
+  </section>
+</aside>
+
+</div>
+
+<script>
+function likePost(button) {
+  const post = button.closest(".post");
+  const count = post.querySelector(".likes");
+  let likes = parseInt(count.textContent);
+  if (button.classList.contains("liked")) {
+    button.classList.remove("liked");
+    button.textContent = "♡";
+    likes--;
+  } else {
+    button.classList.add("liked");
+    button.textContent = "♥";
+    likes++;
+  }
+  count.textContent = likes + " likes";
+}
+
+function addComment(button) {
+  const box = button.previousElementSibling;
+  const value = box.value.trim();
+  if (!value) return;
+
+  const comment = document.createElement("p");
+  comment.textContent = "you: " + value;
+  button.closest(".post").querySelector(".comments").appendChild(comment);
+  box.value = "";
+}
+
+function focusComment(button) {
+  button.closest(".post").querySelector(".comment-box input").focus();
+}
+
+function followUser(button) {
+  if (button.textContent === "Follow") {
+    button.textContent = "Following";
+  } else {
+    button.textContent = "Follow";
+  }
+}
+</script>
+
+</body>
+</html>
