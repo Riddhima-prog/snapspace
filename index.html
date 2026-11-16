@@ -4,394 +4,252 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SnapSpace | Share Your Moments</title>
-
+<title>SnapSpace — Your World, Your Moments</title>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+:root {
+  --bg:#f7f7fb; --card:#fff; --text:#252535;
+  --muted:#858595; --accent:#e84393; --line:#ececf2;
 }
-
-body {
-  background: #fafafa;
-  color: #262626;
+body.dark {
+  --bg:#151520; --card:#222232; --text:#f4f4fa;
+  --muted:#aaaabd; --line:#39394a;
 }
-
+* {box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body {background:var(--bg);color:var(--text);transition:.2s}
+button,input {font:inherit}
+button {cursor:pointer}
 .navbar {
-  height: 65px;
-  background: white;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  height:65px;background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-around;
+  position:sticky;top:0;z-index:10;
 }
-
-.logo {
-  font-size: 25px;
-  font-weight: bold;
-  color: #d94682;
-}
-
-.search {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fafafa;
-}
-
-.nav-links {
-  display: flex;
-  gap: 22px;
-  font-size: 22px;
-  cursor: pointer;
-}
-
-.container {
-  max-width: 950px;
-  margin: 30px auto;
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 30px;
-  padding: 0 15px;
-}
-
-.stories, .post, .suggestions {
-  background: white;
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-}
-
-.stories {
-  display: flex;
-  gap: 18px;
-  padding: 18px;
-  overflow-x: auto;
-  margin-bottom: 22px;
-}
-
-.story {
-  text-align: center;
-  font-size: 12px;
-  min-width: 60px;
-}
-
-.story img {
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  border: 3px solid #e84393;
-  padding: 2px;
-  object-fit: cover;
-  margin-bottom: 5px;
-}
-
-.post {
-  margin-bottom: 25px;
-  overflow: hidden;
-}
-
-.post-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px;
-  font-weight: bold;
-}
-
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.post-image {
-  width: 100%;
-  max-height: 520px;
-  object-fit: cover;
-  display: block;
-}
-
-.actions {
-  padding: 12px 15px;
-  font-size: 25px;
-}
-
-.actions span {
-  cursor: pointer;
-  margin-right: 12px;
-}
-
-.liked {
-  color: #ed315b;
-}
-
-.post-info {
-  padding: 0 15px 15px;
-  font-size: 14px;
-  line-height: 1.7;
-}
-
-.comment-box {
-  display: flex;
-  border-top: 1px solid #eee;
-  padding: 12px;
-  gap: 8px;
-}
-
-.comment-box input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 14px;
-}
-
-.comment-box button {
-  background: none;
-  color: #d94682;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.sidebar {
-  padding: 15px;
-}
-
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 25px;
-}
-
-.profile img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.suggestions {
-  padding: 15px;
-}
-
-.suggestion {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 18px;
-  font-size: 13px;
-}
-
-.follow {
-  color: #d94682;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-h4 {
-  color: #888;
-}
-
-@media(max-width: 700px) {
-  .container {
-    display: block;
-    max-width: 500px;
-  }
-  .sidebar, .search {
-    display: none;
-  }
-  .navbar {
-    justify-content: space-around;
-  }
-  .nav-links {
-    gap: 14px;
-  }
+.logo {font-size:26px;font-weight:bold;color:var(--accent)}
+.search {padding:11px;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg);color:var(--text);width:220px}
+.nav-links {display:flex;gap:20px;align-items:center}
+.nav-links button {border:0;background:none;font-size:22px;color:var(--text)}
+.container {max-width:1050px;margin:28px auto;display:grid;
+  grid-template-columns:minmax(0,620px) 290px;gap:30px;padding:0 15px}
+.card {background:var(--card);border:1px solid var(--line);
+  border-radius:13px;margin-bottom:20px;overflow:hidden}
+.stories {display:flex;gap:20px;padding:17px;overflow-x:auto}
+.story {min-width:65px;text-align:center;font-size:12px;cursor:pointer}
+.story img {width:60px;height:60px;border-radius:50%;object-fit:cover;
+  border:3px solid var(--accent);padding:2px;margin-bottom:5px}
+.create {padding:17px}
+.create input[type=text] {width:65%;padding:11px;border:1px solid var(--line);
+  border-radius:8px;background:var(--bg);color:var(--text)}
+.primary {background:var(--accent);color:white;border:0;border-radius:8px;
+  padding:11px 16px;font-weight:bold}
+.secondary {background:var(--bg);color:var(--text);border:1px solid var(--line);
+  border-radius:8px;padding:10px}
+.post-header {display:flex;align-items:center;gap:11px;padding:14px}
+.avatar {width:39px;height:39px;border-radius:50%;object-fit:cover}
+.post-image {width:100%;max-height:520px;object-fit:cover;display:block}
+.actions {padding:12px 15px;display:flex;gap:17px}
+.actions button {border:0;background:none;color:var(--text);font-size:24px}
+.actions .liked {color:#ed315b}
+.post-info {padding:0 15px 15px;font-size:14px;line-height:1.8}
+.comments {color:var(--muted)}
+.comment-box {display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.comment-box input {flex:1;min-width:0;border:0;outline:none;
+  background:transparent;color:var(--text)}
+.comment-box button {border:0;background:none;color:var(--accent);font-weight:bold}
+.sidebar {position:sticky;top:90px;height:max-content}
+.profile,.suggestions {padding:17px}
+.profile {display:flex;align-items:center;gap:12px}
+.profile img {width:50px;height:50px;border-radius:50%;object-fit:cover}
+.muted {color:var(--muted);font-size:13px}
+.suggestion {display:flex;justify-content:space-between;align-items:center;
+  margin-top:18px;font-size:14px}
+.follow {border:0;background:none;color:var(--accent);font-weight:bold}
+.modal {display:none;position:fixed;inset:0;background:#000a;z-index:30;
+  align-items:center;justify-content:center;padding:18px}
+.modal.show {display:flex}
+.modal-content {background:var(--card);color:var(--text);border-radius:14px;
+  padding:22px;width:min(430px,100%);max-height:85vh;overflow:auto}
+.modal-content h2 {margin-bottom:15px}
+.modal-content button.close {float:right;border:0;background:none;
+  color:var(--text);font-size:23px}
+.modal-content img {max-width:100%;border-radius:10px;margin:10px 0}
+.profile-stats {display:flex;gap:25px;margin:18px 0}
+.profile-stats b {display:block;text-align:center}
+.empty {padding:25px;text-align:center;color:var(--muted)}
+.hidden {display:none!important}
+@media(max-width:760px) {
+ .container {display:block;max-width:550px}
+ .sidebar,.search {display:none}
+ .navbar {justify-content:space-around}
+ .nav-links {gap:13px}
+ .logo {font-size:22px}
 }
 </style>
 </head>
-
 <body>
-
 <header class="navbar">
   <div class="logo">SnapSpace.</div>
-  <input class="search" placeholder="Search">
+  <input class="search" id="search" placeholder="Search people or captions..." oninput="searchContent()">
   <div class="nav-links">
-    <span title="Home">⌂</span>
-    <span title="Explore">🔍</span>
-    <span title="Messages">✉</span>
-    <span title="Profile">👤</span>
+    <button onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Home">⌂</button>
+    <button onclick="openProfile()" title="Profile">👤</button>
+    <button onclick="openNotifications()" title="Notifications">♡</button>
+    <button onclick="toggleTheme()" title="Dark mode">☾</button>
   </div>
 </header>
 
 <div class="container">
-
 <main>
-<div style="background:white;padding:15px;margin-bottom:15px;border:1px solid #ddd;border-radius:10px;">
-  <button onclick="document.getElementById('photoUpload').click()"
-  style="background:#d94682;color:white;border:0;padding:12px 20px;border-radius:8px;cursor:pointer;">
-  + Create Post
-  </button>
+  <section class="card stories">
+    <div class="story" onclick="showStory('Your story','Add your own moments with Create Post!')">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+      Your story
+    </div>
+    <div class="story" onclick="showStory('Rahul','Enjoying the little things 🌿')">
+      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">Rahul
+    </div>
+    <div class="story" onclick="showStory('Priya','Golden hour ✨')">
+      <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100">Priya
+    </div>
+    <div class="story" onclick="showStory('Aman','Adventure awaits 🏔️')">
+      <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">Aman
+    </div>
+    <div class="story" onclick="showStory('Neha','Little moments 💕')">
+      <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100">Neha
+    </div>
+  </section>
 
-  <input type="file" id="photoUpload" accept="image/*" hidden onchange="createPost(event)">
+  <section class="card create">
+    <h3 style="margin-bottom:12px">Share a moment ✨</h3>
+    <input type="text" id="caption" placeholder="Write something about your day...">
+    <input type="file" id="photo" accept="image/*" hidden>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <button class="secondary" onclick="document.getElementById('photo').click()">📷 Choose photo</button>
+      <button class="primary" onclick="createPost()">+ Create Post</button>
+    </div>
+    <p class="muted" id="selectedPhoto" style="margin-top:9px">No photo selected</p>
+  </section>
 
-  <input id="captionInput" placeholder="Write a caption..."
-  style="padding:10px;border:1px solid #ddd;border-radius:8px;margin-left:10px;max-width:65%;">
-</div>
-<section class="stories">
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
-    Your story
-  </div>
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">
-    Rahul
-  </div>
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100">
-    Priya
-  </div>
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">
-    Aman
-  </div>
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100">
-    Neha
-  </div>
-</section>
+  <div id="feed">
+    <article class="card post" data-user="rahul_photography">
+      <div class="post-header">
+        <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">
+        <b>rahul_photography</b>
+      </div>
+      <img class="post-image" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900">
+      <div class="actions">
+        <button onclick="likePost(this)">♡</button>
+        <button onclick="focusComment(this)">♧</button>
+        <button onclick="savePost(this)">♧</button>
+      </div>
+      <div class="post-info">
+        <b class="likes">120 likes</b>
+        <p><b>rahul_photography</b> Finding peace in little moments 🌿</p>
+        <div class="comments"></div>
+      </div>
+      <div class="comment-box"><input placeholder="Add a comment..."><button onclick="addComment(this)">Post</button></div>
+    </article>
 
-<div id="feed">
+    <article class="card post" data-user="priya_diaries">
+      <div class="post-header">
+        <img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+        <b>priya_diaries</b>
+      </div>
+      <img class="post-image" src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900">
+      <div class="actions">
+        <button onclick="likePost(this)">♡</button>
+        <button onclick="focusComment(this)">♧</button>
+        <button onclick="savePost(this)">♧</button>
+      </div>
+      <div class="post-info">
+        <b class="likes">245 likes</b>
+        <p><b>priya_diaries</b> Golden hour hits differently ✨</p>
+        <div class="comments"></div>
+      </div>
+      <div class="comment-box"><input placeholder="Add a comment..."><button onclick="addComment(this)">Post</button></div>
+    </article>
 
-<article class="post">
-  <div class="post-header">
-    <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">
-    rahul_photography
+    <article class="card post" data-user="aman.travels">
+      <div class="post-header">
+        <img class="avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">
+        <b>aman.travels</b>
+      </div>
+      <img class="post-image" src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900">
+      <div class="actions">
+        <button onclick="likePost(this)">♡</button>
+        <button onclick="focusComment(this)">♧</button>
+        <button onclick="savePost(this)">♧</button>
+      </div>
+      <div class="post-info">
+        <b class="likes">89 likes</b>
+        <p><b>aman.travels</b> Somewhere between the mountains 🏔️</p>
+        <div class="comments"></div>
+      </div>
+      <div class="comment-box"><input placeholder="Add a comment..."><button onclick="addComment(this)">Post</button></div>
+    </article>
   </div>
-  <img class="post-image" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900">
-  <div class="actions">
-    <span class="like" onclick="likePost(this)">♡</span>
-    <span onclick="focusComment(this)">♧</span>
-    <span>➤</span>
-  </div>
-  <div class="post-info">
-    <b class="likes">120 likes</b>
-    <p><b>rahul_photography</b> Finding peace in little moments 🌿</p>
-    <div class="comments"></div>
-  </div>
-  <div class="comment-box">
-    <input placeholder="Add a comment...">
-    <button onclick="addComment(this)">Post</button>
-  </div>
-</article>
-
-<article class="post">
-  <div class="post-header">
-    <img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
-    priya_diaries
-  </div>
-  <img class="post-image" src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900">
-  <div class="actions">
-    <span class="like" onclick="likePost(this)">♡</span>
-    <span onclick="focusComment(this)">♧</span>
-    <span>➤</span>
-  </div>
-  <div class="post-info">
-    <b class="likes">245 likes</b>
-    <p><b>priya_diaries</b> Golden hour hits differently ✨</p>
-    <div class="comments"></div>
-  </div>
-  <div class="comment-box">
-    <input placeholder="Add a comment...">
-    <button onclick="addComment(this)">Post</button>
-  </div>
-</article>
-
-<article class="post">
-  <div class="post-header">
-    <img class="avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">
-    aman.travels
-  </div>
-  <img class="post-image" src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900">
-  <div class="actions">
-    <span class="like" onclick="likePost(this)">♡</span>
-    <span onclick="focusComment(this)">♧</span>
-    <span>➤</span>
-  </div>
-  <div class="post-info">
-    <b class="likes">89 likes</b>
-    <p><b>aman.travels</b> Somewhere between the mountains 🏔️</p>
-    <div class="comments"></div>
-  </div>
-  <div class="comment-box">
-    <input placeholder="Add a comment...">
-    <button onclick="addComment(this)">Post</button>
-  </div>
-</article>
-
-</div>
+  <p class="empty hidden" id="noResults">No matching posts found.</p>
 </main>
 
 <aside class="sidebar">
-  <div class="profile">
+  <section class="card profile">
     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
-    <div>
-      <b>your_username</b>
-      <p style="color:gray;font-size:13px">Welcome to SnapSpace!</p>
-    </div>
-  </div>
-
-  <section class="suggestions">
-    <h4>Suggested for you</h4>
-    <div class="suggestion">
-      <b>travel_diary</b>
-      <span class="follow" onclick="followUser(this)">Follow</span>
-    </div>
-    <div class="suggestion">
-      <b>foodie_world</b>
-      <span class="follow" onclick="followUser(this)">Follow</span>
-    </div>
-    <div class="suggestion">
-      <b>daily_vibes</b>
-      <span class="follow" onclick="followUser(this)">Follow</span>
-    </div>
+    <div><b>your_username</b><p class="muted">Welcome to SnapSpace!</p></div>
+  </section>
+  <section class="card suggestions">
+    <b>Suggested for you</b>
+    <div class="suggestion"><b>travel_diary</b><button class="follow" onclick="followUser(this)">Follow</button></div>
+    <div class="suggestion"><b>foodie_world</b><button class="follow" onclick="followUser(this)">Follow</button></div>
+    <div class="suggestion"><b>daily_vibes</b><button class="follow" onclick="followUser(this)">Follow</button></div>
+    <div class="suggestion"><b>art_and_soul</b><button class="follow" onclick="followUser(this)">Follow</button></div>
+  </section>
+  <section class="card profile" style="display:block">
+    <b>✨ Your SnapSpace</b>
+    <p class="muted" style="margin-top:8px">Share moments. Find inspiration. Stay connected.</p>
+    <button class="secondary" style="margin-top:13px" onclick="openSaved()">View saved posts</button>
   </section>
 </aside>
+</div>
 
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-content">
+    <button class="close" onclick="closeModal()">×</button>
+    <div id="modalBody"></div>
+  </div>
 </div>
 
 <script>
+let savedPosts = [];
+let following = new Set();
+let notifications = ["Welcome to SnapSpace! 🎉","Your profile is ready to explore."];
+let selectedImage = null;
+
+const photoInput = document.getElementById("photo");
+photoInput.addEventListener("change", function() {
+  selectedImage = this.files[0] || null;
+  document.getElementById("selectedPhoto").textContent =
+    selectedImage ? selectedImage.name : "No photo selected";
+});
+
 function likePost(button) {
   const post = button.closest(".post");
   const count = post.querySelector(".likes");
-  let likes = parseInt(count.textContent);
-  if (button.classList.contains("liked")) {
-    button.classList.remove("liked");
-    button.textContent = "♡";
-    likes--;
-  } else {
-    button.classList.add("liked");
-    button.textContent = "♥";
-    likes++;
-  }
-  count.textContent = likes + " likes";
+  let likes = parseInt(count.textContent) || 0;
+  const liked = button.dataset.liked === "yes";
+  button.dataset.liked = liked ? "no" : "yes";
+  button.textContent = liked ? "♡" : "♥";
+  button.classList.toggle("liked", !liked);
+  count.textContent = (likes + (liked ? -1 : 1)) + " likes";
 }
 
 function addComment(button) {
-  const box = button.previousElementSibling;
-  const value = box.value.trim();
+  const input = button.previousElementSibling;
+  const value = input.value.trim();
   if (!value) return;
-
   const comment = document.createElement("p");
   comment.textContent = "you: " + value;
   button.closest(".post").querySelector(".comments").appendChild(comment);
-  box.value = "";
+  input.value = "";
+  notifications.unshift("You commented on a post.");
 }
 
 function focusComment(button) {
@@ -399,56 +257,147 @@ function focusComment(button) {
 }
 
 function followUser(button) {
-  if (button.textContent === "Follow") {
-    button.textContent = "Following";
-  } else {
+  const username = button.parentElement.querySelector("b").textContent;
+  if (following.has(username)) {
+    following.delete(username);
     button.textContent = "Follow";
+  } else {
+    following.add(username);
+    button.textContent = "Following";
+    notifications.unshift("You followed " + username + ".");
   }
 }
-  function createPost(event) {
-  const file = event.target.files[0];
-  if (!file) return;
 
-  if (!file.type.startsWith("image/")) {
+function savePost(button) {
+  const post = button.closest(".post");
+  if (savedPosts.includes(post)) {
+    savedPosts = savedPosts.filter(p => p !== post);
+    button.textContent = "♧";
+  } else {
+    savedPosts.push(post);
+    button.textContent = "🔖";
+  }
+}
+
+function createPost() {
+  if (!selectedImage) {
+    alert("Please choose a photo first.");
+    return;
+  }
+  if (!selectedImage.type.startsWith("image/")) {
     alert("Please select an image.");
     return;
   }
-
-  if (file.size > 5 * 1024 * 1024) {
-    alert("Image must be smaller than 5 MB.");
+  if (selectedImage.size > 5 * 1024 * 1024) {
+    alert("Please choose an image smaller than 5 MB.");
     return;
   }
 
-  const imageURL = URL.createObjectURL(file);
-  const caption = document.getElementById("captionInput").value;
+  const url = URL.createObjectURL(selectedImage);
+  const caption = document.getElementById("caption").value.trim();
 
   const post = document.createElement("article");
-  post.className = "post";
+  post.className = "card post";
+  post.dataset.user = "your_username";
 
   const header = document.createElement("div");
   header.className = "post-header";
-  header.textContent = "your_username";
+  header.textContent = "👤 your_username";
 
-  const image = document.createElement("img");
-  image.className = "post-image";
-  image.src = imageURL;
+  const img = document.createElement("img");
+  img.className = "post-image";
+  img.src = url;
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+  actions.innerHTML = '<button onclick="likePost(this)">♡</button><button onclick="focusComment(this)">♧</button><button onclick="savePost(this)">♧</button>';
 
   const info = document.createElement("div");
   info.className = "post-info";
-  info.textContent = "0 likes";
-
+  const likes = document.createElement("b");
+  likes.className = "likes";
+  likes.textContent = "0 likes";
   const description = document.createElement("p");
-  description.textContent = caption;
+  description.textContent = "your_username: " + caption;
+  const comments = document.createElement("div");
+  comments.className = "comments";
+  info.append(likes, description, comments);
 
-  info.appendChild(description);
-  post.append(header, image, info);
+  const commentBox = document.createElement("div");
+  commentBox.className = "comment-box";
+  commentBox.innerHTML = '<input placeholder="Add a comment..."><button onclick="addComment(this)">Post</button>';
 
+  post.append(header, img, actions, info, commentBox);
   document.getElementById("feed").prepend(post);
 
-  document.getElementById("captionInput").value = "";
-  event.target.value = "";
+  document.getElementById("caption").value = "";
+  photoInput.value = "";
+  selectedImage = null;
+  document.getElementById("selectedPhoto").textContent = "No photo selected";
+  notifications.unshift("Your new post was created.");
 }
-</script>
 
+function searchContent() {
+  const query = document.getElementById("search").value.toLowerCase().trim();
+  let visible = 0;
+  document.querySelectorAll(".post").forEach(post => {
+    const match = post.textContent.toLowerCase().includes(query) ||
+      (post.dataset.user || "").includes(query);
+    post.classList.toggle("hidden", !match);
+    if (match) visible++;
+  });
+  document.getElementById("noResults").classList.toggle("hidden", visible > 0);
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+}
+
+function showStory(name, message) {
+  showModal("<h2>📸 " + name + "'s Story</h2><p>" + message + "</p>");
+}
+
+function openProfile() {
+  const count = document.querySelectorAll('.post[data-user="your_username"]').length;
+  showModal('<h2>👤 your_username</h2><p class="muted">Welcome to your SnapSpace profile</p><div class="profile-stats"><div><b>'+count+'</b>Posts</div><div><b>'+following.size+'</b>Following</div><div><b>'+savedPosts.length+'</b>Saved</div></div><p>✨ Sharing little moments and big memories.</p>');
+}
+
+function openNotifications() {
+  showModal("<h2>♡ Notifications</h2>" +
+    (notifications.length ? notifications.map(n => "<p style='padding:12px 0;border-bottom:1px solid var(--line)'>" + escapeHTML(n) + "</p>").join("") : "<p>No notifications yet.</p>"));
+}
+
+function openSaved() {
+  showModal("<h2>🔖 Saved Posts</h2>");
+  const body = document.getElementById("modalBody");
+  if (!savedPosts.length) {
+    body.innerHTML += "<p>No saved posts yet. Tap the bookmark icon on a post to save it.</p>";
+    return;
+  }
+  savedPosts.forEach(post => {
+    const copy = post.querySelector(".post-image").cloneNode();
+    body.appendChild(copy);
+  });
+}
+
+function escapeHTML(value) {
+  return value.replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function showModal(content) {
+  document.getElementById("modalBody").innerHTML = content;
+  document.getElementById("modal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("show");
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+});
+</script>
 </body>
 </html>
