@@ -1,335 +1,60 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SnapSpace — Connect & Share</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>SnapSpace — Share your world</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#faf8fc;color:#292333;font-family:Arial,sans-serif}
-header{height:65px;background:white;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;padding:0 max(calc((100% - 950px)/2),18px);position:sticky;top:0;z-index:5}
-.logo{font-size:25px;font-weight:bold;color:#913cce}
-button{cursor:pointer;background:#913cce;color:white;border:0;border-radius:8px;padding:11px 16px;font-weight:bold}
-button.secondary{background:#f0e9f7;color:#67339a}
-input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:7px 0;font:inherit}
-textarea{resize:vertical;min-height:65px}
-.card{background:white;border:1px solid #eee;border-radius:13px;padding:17px;margin-bottom:18px}
-.wrap{max-width:950px;margin:25px auto;display:grid;grid-template-columns:minmax(0,620px) 280px;gap:24px;padding:0 12px}
-.hidden{display:none!important}
-.muted{color:#888;font-size:13px}
-#auth{max-width:420px;margin:65px auto}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.posthead{display:flex;align-items:center;justify-content:space-between}
-.postimg{width:100%;max-height:550px;object-fit:contain;background:#f5f1f7;border-radius:9px;margin-top:12px}
-.comment{border-top:1px solid #eee;padding:8px 0;font-size:14px}
-.person{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0}
-@media(max-width:700px){.wrap{display:block}.side{display:none}header{padding:0 15px}}
+:root{--purple:#7546d8;--purple2:#9a6df0;--ink:#211b2b;--muted:#81798d;--line:#eeeaf3;--bg:#faf9fc;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif}button,input,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:11px;padding:11px 16px;background:var(--purple);color:white;font-weight:700;transition:.18s}button:hover{filter:brightness(1.06);transform:translateY(-1px)}button:disabled{opacity:.55;cursor:wait;transform:none}.secondary{background:#f1ecfb;color:#603bb3}.danger{background:#fff0f1;color:#c23850}.quiet{background:transparent;color:var(--muted)}input,textarea{width:100%;border:1px solid #e5e0eb;background:#fff;border-radius:11px;padding:13px 14px;outline:none;margin:6px 0;color:var(--ink)}input:focus,textarea:focus{border-color:#a78be8;box-shadow:0 0 0 3px #7546d815}textarea{min-height:82px;resize:vertical}.hidden{display:none!important}.muted{color:var(--muted);font-size:13px}.tiny{font-size:12px;color:var(--muted)}.topbar{height:68px;background:#ffffffed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.topinner{max-width:1120px;height:100%;margin:auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-size:25px;font-weight:900;letter-spacing:-1.2px;color:var(--purple)}.brand span{color:#282132}.topactions{display:flex;align-items:center;gap:10px}.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#b9a0ff,#7546d8);color:#fff;display:inline-grid;place-items:center;font-weight:800;flex:none}.shell{max-width:1120px;margin:26px auto;padding:0 18px;display:grid;grid-template-columns:220px minmax(0,620px) 240px;gap:22px;align-items:start}.panel,.post,.authbox{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 22px #2a173508}.sidebar{position:sticky;top:88px}.navpanel{padding:12px}.navbtn{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:transparent;color:#51495d;padding:13px;border-radius:12px;margin:2px 0}.navbtn.active,.navbtn:hover{background:#f2edfc;color:var(--purple);transform:none}.navico{font-size:19px;width:22px;text-align:center}.sidecard{padding:17px;margin-top:14px}.maincol{min-width:0}.welcome{padding:22px;background:linear-gradient(120deg,#f1eaff,#fff 70%);margin-bottom:18px}.welcome h2{margin:0 0 6px;font-size:24px;letter-spacing:-.7px}.compose{padding:18px;margin-bottom:18px}.composehead{display:flex;align-items:center;gap:11px;margin-bottom:8px}.composehead strong{font-size:15px}.filepick{display:block;border:1px dashed #cfc3e6;background:#fbf9ff;padding:13px;border-radius:12px;margin:8px 0;color:#695b7c;font-size:13px}.feedhead{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 12px}.feedhead h3{margin:0}.post{padding:17px;margin-bottom:17px}.posttop{display:flex;align-items:center;justify-content:space-between;gap:10px}.userline{display:flex;align-items:center;gap:10px;min-width:0}.userline strong{display:block}.postimg{display:block;width:100%;max-height:650px;object-fit:contain;background:#f5f2f8;border-radius:13px;margin:13px 0}.postcaption{line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.postactions{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.postactions button{padding:8px 12px}.commentlist{margin-top:8px}.comment{padding:7px 0;font-size:13px;line-height:1.45}.comment strong{margin-right:5px}.commentform{display:flex;gap:8px;margin-top:8px}.commentform input{margin:0}.commentform button{white-space:nowrap}.rightcard{padding:17px;margin-bottom:14px}.rightcard h3{font-size:15px;margin:0 0 13px}.person{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid #f3eff6}.person:last-child{border:0}.personname{font-size:13px;font-weight:700;overflow-wrap:anywhere}.person button{padding:7px 11px;font-size:12px}.authwrap{min-height:calc(100vh - 68px);display:grid;place-items:center;padding:35px 16px;background:radial-gradient(ellipse at 20% 20%,#efe7ff 0,transparent 40%),radial-gradient(ellipse at 80% 70%,#f9eaff 0,transparent 40%),var(--bg)}.authbox{width:min(100%,440px);padding:30px}.authbox h1{margin:0 0 8px;font-size:28px;letter-spacing:-1px}.authbox .brand{margin-bottom:25px}.authswitch{display:flex;gap:8px;margin:15px 0}.authswitch button{flex:1}.notice{padding:11px 13px;border-radius:11px;background:#f4f0fb;color:#5f4a83;font-size:13px;line-height:1.5;margin-top:12px}.status{min-height:20px;margin:9px 0}.empty{padding:35px 18px;text-align:center;color:var(--muted)}.empty b{display:block;color:var(--ink);margin-bottom:5px}.profilebox{padding:20px;margin-bottom:18px}.profilehead{display:flex;gap:14px;align-items:center}.profilehead .avatar{width:58px;height:58px;font-size:22px}.profilestats{display:flex;gap:22px;margin:15px 0;color:var(--muted);font-size:13px}.profilestats b{color:var(--ink)}.searchbar{margin-bottom:15px}.mobilebar{display:none}
+@media(max-width:980px){.shell{grid-template-columns:190px minmax(0,1fr)}.rightside{display:none}}
+@media(max-width:650px){.topinner{padding:0 14px}.brand{font-size:22px}.shell{display:block;margin:14px auto;padding:0 10px;padding-bottom:72px}.sidebar{display:none}.maincol{width:100%}.mobilebar{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:12;justify-content:space-around;padding:8px 5px calc(8px + env(safe-area-inset-bottom))}.mobilebar .navbtn{width:auto;margin:0;padding:9px 12px;display:grid;gap:1px;text-align:center;font-size:11px}.mobilebar .navico{width:auto;font-size:19px}.welcome{padding:17px}.welcome h2{font-size:21px}.post{padding:13px;border-radius:15px}.compose{padding:14px}.topactions .muted{display:none}.authbox{padding:23px}.authwrap{align-items:start;padding-top:45px}}
 </style>
 </head>
 <body>
-
-<header>
- <div class="logo">SnapSpace ✦</div>
- <span id="userLabel" class="muted">Welcome!</span>
- <button id="logoutBtn" class="secondary hidden" onclick="logout()">Log out</button>
-</header>
-
-<section id="auth" class="card">
- <h2>Welcome to SnapSpace 💜</h2>
- <p class="muted">Share moments. Discover people. Connect everywhere.</p>
- <input id="email" type="email" placeholder="Email address">
- <input id="password" type="password" placeholder="Password (minimum 6 characters)">
- <input id="username" placeholder="Username (for new accounts)">
- <div class="actions">
-  <button onclick="signup()">Create account</button>
-  <button class="secondary" onclick="login()">Log in</button>
- </div>
- <p id="authMessage" class="muted"></p>
-</section>
-
-<div id="app" class="wrap hidden">
- <main>
-  <section class="card">
-   <h3>✨ Share a moment</h3>
-   <input id="photo" type="file" accept="image/*">
-   <textarea id="caption" placeholder="What's happening?"></textarea>
-   <button onclick="createPost()">Publish post</button>
-   <p id="postMessage" class="muted"></p>
-  </section>
-  <h3>Community feed</h3>
-  <div id="feed">Loading...</div>
- </main>
- <aside class="side">
-  <section class="card">
-   <h3>Your profile</h3>
-   <input id="fullName" placeholder="Full name">
-   <textarea id="bio" placeholder="Write your bio"></textarea>
-   <button onclick="saveProfile()">Save profile</button>
-   <p id="profileMessage" class="muted"></p>
-  </section>
-  <section class="card">
-   <h3>Discover people</h3>
-   <div id="people"></div>
-  </section>
- </aside>
+<header class="topbar"><div class="topinner"><div class="brand">snapspace<span> ✦</span></div><div class="topactions"><span id="topUser" class="muted">A little space to share your world</span><div id="topAvatar" class="avatar hidden">S</div><button id="logoutBtn" class="secondary hidden" onclick="logout()">Log out</button></div></div></header>
+<section id="authView" class="authwrap"><div class="authbox"><div class="brand">snapspace ✦</div><h1 id="authTitle">Your world, your people.</h1><p class="muted" id="authSubtitle">Share moments and find your community.</p><div class="authswitch"><button id="signupTab" onclick="setAuthMode('signup')">Create account</button><button id="loginTab" class="secondary" onclick="setAuthMode('login')">Log in</button></div><div id="usernameField"><input id="username" autocomplete="username" placeholder="Choose a username"></div><input id="email" type="email" autocomplete="email" placeholder="Email address"><input id="password" type="password" autocomplete="current-password" placeholder="Password (at least 6 characters)"><button id="authSubmit" style="width:100%;margin-top:8px" onclick="submitAuth()">Create my account</button><p id="authMessage" class="status muted" role="status"></p><div class="notice">Be kind, keep it real, and share only what you're comfortable making public. Your posts are visible to the SnapSpace community.</div></div></section>
+<div id="appView" class="shell hidden">
+<aside class="sidebar"><div class="panel navpanel"><button class="navbtn active" data-page="home" onclick="showPage('home')"><span class="navico">⌂</span> Home feed</button><button class="navbtn" data-page="explore" onclick="showPage('explore')"><span class="navico">⌕</span> Explore people</button><button class="navbtn" data-page="profile" onclick="showPage('profile')"><span class="navico">◉</span> My profile</button></div><div class="panel sidecard"><div class="muted">WELCOME TO</div><h3 style="margin:5px 0;color:var(--purple)">SnapSpace ✦</h3><p class="tiny">A place for everyday moments, new connections, and your own little corner of the internet.</p></div></aside>
+<main class="maincol">
+<section id="homePage"><div class="panel welcome"><h2>Make room for your moments ✨</h2><p class="muted" style="margin:6px 0 0">A fresh feed, familiar faces, and stories worth sharing.</p></div>
+<section class="panel compose"><div class="composehead"><div class="avatar" id="composeAvatar">S</div><div><strong>Share something with the community</strong><div class="tiny">Your next moment belongs here</div></div></div><label class="filepick">📷 Choose a photo<input id="photo" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="border:0;padding:8px 0 0;margin:0;background:transparent"></label><textarea id="caption" maxlength="2200" placeholder="What's happening?"></textarea><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="tiny">Images up to 5 MB · JPG, PNG, WEBP or GIF</span><button id="publishBtn" onclick="createPost()">Publish post</button></div><p id="postMessage" class="status muted"></p></section>
+<div class="feedhead"><h3>Community feed</h3><button class="secondary" onclick="loadFeed()">↻ Refresh</button></div><input id="feedSearch" class="searchbar" placeholder="Search captions or usernames..." oninput="filterFeed()"><div id="feed"><div class="empty">Loading community posts…</div></div></section>
+<section id="explorePage" class="hidden"><div class="panel welcome"><h2>Find your people 💜</h2><p class="muted">Discover members and connect with the community.</p></div><input id="peopleSearch" placeholder="Search usernames or names..." oninput="renderPeople()"><div id="peopleList" class="panel" style="padding:15px">Loading people…</div></section>
+<section id="profilePage" class="hidden"><div class="panel profilebox"><div class="profilehead"><div class="avatar" id="profileAvatar">S</div><div><h2 id="profileUsername" style="margin:0 0 4px">Your profile</h2><div id="profileEmail" class="muted"></div></div></div><div class="profilestats"><span><b id="myPostCount">0</b> posts</span><span><b id="myFollowerCount">0</b> followers</span><span><b id="myFollowingCount">0</b> following</span></div><hr style="border:0;border-top:1px solid var(--line)"><h3>Edit profile</h3><input id="fullName" maxlength="60" placeholder="Full name"><textarea id="bio" maxlength="250" placeholder="A little about you…"></textarea><button onclick="saveProfile()">Save changes</button><p id="profileMessage" class="status muted"></p></div><h3>Your posts</h3><div id="myPosts"></div></section>
+</main>
+<aside class="rightside"><section class="panel rightcard"><h3>People to discover</h3><div id="people"></div><button class="quiet" style="width:100%;margin-top:8px" onclick="showPage('explore')">See everyone →</button></section><section class="panel rightcard"><h3>Community note</h3><p class="tiny">Keep personal information private. Only upload photos you have permission to share. You can delete your own posts anytime.</p></section></aside>
 </div>
-
+<nav class="mobilebar hidden" id="mobileNav"><button class="navbtn active" data-page="home" onclick="showPage('home')"><span class="navico">⌂</span>Home</button><button class="navbtn" data-page="explore" onclick="showPage('explore')"><span class="navico">⌕</span>Explore</button><button class="navbtn" data-page="profile" onclick="showPage('profile')"><span class="navico">◉</span>Profile</button></nav>
 <script>
-/* SUPABASE CONNECTION */
-const SUPABASE_URL = "https://wtlexluattzefvzkcxjh.supabase.co";
-const SUPABASE_KEY = "sb_publishable_rqh7QKmoSJxmHHED5ZvS6Q_HYUIBKx-";
-
-const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let currentUser = null;
-let signupInProgress = false;
-
-function safe(v){
- return String(v??"").replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
-}
-function msg(id,t){document.getElementById(id).textContent=t;}
-
-function friendlyAuthError(error){
- const message=String(error?.message||"Something went wrong.");
- const lower=message.toLowerCase();
- if(lower.includes("rate limit")||lower.includes("too many")){
-  return "Email sending is temporarily rate-limited. Please stop retrying and try again later.";
- }
- if(lower.includes("invalid login credentials")){
-  return "Login failed. If you just created this account, confirm your email first. If no email arrived, wait for the email limit to reset before requesting another.";
- }
- return message;
-}
-
-async function signup(){
- if(signupInProgress)return;
-
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
- const username=document.getElementById("username").value.trim().toLowerCase();
-
- if(!email||password.length<6||!username){
-  return msg("authMessage","Enter your email, password (6+ characters) and username.");
- }
-
- signupInProgress=true;
- const signupButton=document.querySelector('#auth button[onclick="signup()"]');
- if(signupButton){signupButton.disabled=true;signupButton.textContent="Please wait...";}
-
- try{
-  const {data,error}=await db.auth.signUp({
-   email,password,
-   options:{
-    data:{username,full_name:username},
-    emailRedirectTo:window.location.origin+window.location.pathname
-   }
-  });
-
-  if(error)return msg("authMessage",friendlyAuthError(error));
-  if(data.session){
-   msg("authMessage","Account created!");
-   await loadApp(data.user);
-  }else{
-   msg("authMessage","If this is a new account, check your email for confirmation. Do not repeatedly request emails; configure custom SMTP if email sending is rate-limited.");
-  }
- }catch(error){
-  msg("authMessage",friendlyAuthError(error));
- }finally{
-  signupInProgress=false;
-  if(signupButton){signupButton.disabled=false;signupButton.textContent="Create account";}
- }
-}
-async function login(){
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
- const {data,error}=await db.auth.signInWithPassword({email,password});
- if(error)return msg("authMessage",error.message);
- await loadApp(data.user);
-}
-
-async function logout(){
- await db.auth.signOut();
- currentUser=null;
- document.getElementById("app").classList.add("hidden");
- document.getElementById("auth").classList.remove("hidden");
- document.getElementById("logoutBtn").classList.add("hidden");
- document.getElementById("userLabel").textContent="Welcome!";
-}
-
-async function loadApp(user){
- currentUser=user;
- document.getElementById("auth").classList.add("hidden");
- document.getElementById("app").classList.remove("hidden");
- document.getElementById("logoutBtn").classList.remove("hidden");
- document.getElementById("userLabel").textContent=user.email;
- await Promise.all([loadProfile(),loadFeed(),loadPeople()]);
-}
-
-async function loadProfile(){
- const {data,error}=await db.from("profiles").select("*").eq("id",currentUser.id).single();
- if(error)return msg("profileMessage",error.message);
- document.getElementById("fullName").value=data.full_name||"";
- document.getElementById("bio").value=data.bio||"";
-}
-
-async function saveProfile(){
- const {error}=await db.from("profiles").update({
-  full_name:document.getElementById("fullName").value.trim(),
-  bio:document.getElementById("bio").value.trim()
- }).eq("id",currentUser.id);
- msg("profileMessage",error?error.message:"Profile updated!");
-}
-
-async function createPost(){
- const file=document.getElementById("photo").files[0];
- const caption=document.getElementById("caption").value.trim();
- if(!file)return msg("postMessage","Please choose an image.");
- if(!file.type.startsWith("image/"))return msg("postMessage","Choose a valid image.");
- if(file.size>5*1024*1024)return msg("postMessage","Image must be smaller than 5 MB.");
-
- msg("postMessage","Uploading image...");
- const path=currentUser.id+"/"+crypto.randomUUID()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
- const {error:uploadError}=await db.storage.from("post-images").upload(path,file,{contentType:file.type});
- if(uploadError)return msg("postMessage",uploadError.message);
-
- const {data:urlData}=db.storage.from("post-images").getPublicUrl(path);
- const {error}=await db.from("posts").insert({
-  user_id:currentUser.id,image_url:urlData.publicUrl,caption
- });
- if(error)return msg("postMessage",error.message);
-
- document.getElementById("photo").value="";
- document.getElementById("caption").value="";
- msg("postMessage","Your post is live! 🎉");
- await loadFeed();
-}
-
-async function loadFeed(){
- const feed=document.getElementById("feed");
- feed.textContent="Loading posts...";
- const {data:posts,error}=await db.from("posts")
- .select("id,user_id,image_url,caption,created_at,profiles(username,full_name)")
- .order("created_at",{ascending:false}).limit(50);
-
- if(error){feed.textContent=error.message;return;}
- if(!posts.length){feed.textContent="No posts yet. Be the first to share!";return;}
-
- feed.innerHTML="";
- for(const post of posts){
-  const [likesResult,commentsResult,likeResult]=await Promise.all([
-   db.from("likes").select("user_id").eq("post_id",post.id),
-   db.from("comments").select("id,content,user_id,created_at,profiles(username)").eq("post_id",post.id).order("created_at"),
-   db.from("likes").select("post_id").eq("post_id",post.id).eq("user_id",currentUser.id).maybeSingle()
-  ]);
-
-  if(likesResult.error||commentsResult.error||likeResult.error){
-   feed.textContent="Could not load interactions. Check database permissions.";
-   return;
-  }
-
-  const likes=likesResult.data||[];
-  const comments=commentsResult.data||[];
-  const liked=!!likeResult.data;
-  const commentsHtml=comments.map(c=>
-   `<div class="comment"><b>@${safe(c.profiles?.username||"user")}</b> ${safe(c.content)}</div>`
-  ).join("");
-
-  const card=document.createElement("article");
-  card.className="card";
-  card.innerHTML=`
-   <div class="posthead">
-    <b>@${safe(post.profiles?.username||"user")}</b>
-    <span class="muted">${new Date(post.created_at).toLocaleDateString()}</span>
-   </div>
-   <img class="postimg" src="${safe(post.image_url)}" alt="Post image">
-   <p>${safe(post.caption)}</p>
-   <div class="actions">
-    <button class="secondary" data-like>${liked?"♥ Liked":"♡ Like"} (${likes.length})</button>
-    ${post.user_id===currentUser.id?'<button class="secondary" data-delete>Delete</button>':""}
-   </div>
-   <div>${commentsHtml}</div>
-   <div class="actions">
-    <input data-comment placeholder="Write a comment...">
-    <button data-send>Comment</button>
-   </div>`;
-
-  card.querySelector("[data-like]").onclick=()=>toggleLike(post.id,liked);
-  const del=card.querySelector("[data-delete]");
-  if(del)del.onclick=()=>deletePost(post.id);
-  card.querySelector("[data-send]").onclick=()=>addComment(post.id,card.querySelector("[data-comment]"));
-  feed.appendChild(card);
- }
-}
-
-async function toggleLike(postId,liked){
- const result=liked
- ?await db.from("likes").delete().eq("post_id",postId).eq("user_id",currentUser.id)
- :await db.from("likes").insert({post_id:postId,user_id:currentUser.id});
- if(result.error)return alert(result.error.message);
- await loadFeed();
-}
-
-async function addComment(postId,input){
- const content=input.value.trim();
- if(!content)return;
- const {error}=await db.from("comments").insert({
-  post_id:postId,user_id:currentUser.id,content
- });
- if(error)return alert(error.message);
- await loadFeed();
-}
-
-async function deletePost(postId){
- if(!confirm("Delete this post?"))return;
- const {error}=await db.from("posts").delete().eq("id",postId).eq("user_id",currentUser.id);
- if(error)return alert(error.message);
- await loadFeed();
-}
-
-async function loadPeople(){
- const box=document.getElementById("people");
- const {data,error}=await db.from("profiles").select("id,username,full_name")
- .neq("id",currentUser.id).limit(20);
- if(error){box.textContent=error.message;return;}
- box.innerHTML="";
- for(const person of data){
-  const {data:following,error:followError}=await db.from("follows")
-  .select("following_id").eq("follower_id",currentUser.id)
-  .eq("following_id",person.id).maybeSingle();
-  if(followError){box.textContent=followError.message;return;}
-
-  const line=document.createElement("div");
-  line.className="person";
-  const name=document.createElement("b");
-  name.textContent="@"+person.username;
-  const btn=document.createElement("button");
-  btn.className="secondary";
-  btn.textContent=following?"Following":"Follow";
-  btn.onclick=()=>toggleFollow(person.id,!!following);
-  line.append(name,btn);
-  box.appendChild(line);
- }
-}
-
-async function toggleFollow(id,following){
- const result=following
- ?await db.from("follows").delete().eq("follower_id",currentUser.id).eq("following_id",id)
- :await db.from("follows").insert({follower_id:currentUser.id,following_id:id});
- if(result.error)return alert(result.error.message);
- await loadPeople();
-}
-
-db.auth.onAuthStateChange((event,session)=>{
- if(session?.user&&!currentUser)loadApp(session.user);
-});
-(async()=>{
- const {data,error}=await db.auth.getSession();
- if(error){msg("authMessage",error.message);return;}
- if(data.session)await loadApp(data.session.user);
-})();
-</script>
-</body>
-</html>
+const SUPABASE_URL="https://wtlexluattzefvzkcxjh.supabase.co";
+const SUPABASE_KEY="sb_publishable_rqh7QKmoSJxmHHED5ZvS6Q_HYUIBKx-";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null,profileData=null,allPosts=[],allPeople=[],authMode="signup",authBusy=false;
+const $=id=>document.getElementById(id);
+function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function initials(s){return String(s||"S").trim().slice(0,1).toUpperCase();}
+function setMessage(id,text){$(id).textContent=text||"";}
+function setAuthMode(mode){authMode=mode;$("usernameField").classList.toggle("hidden",mode!=="signup");$("authTitle").textContent=mode==="signup"?"Your world, your people.":"Welcome back."; $("authSubtitle").textContent=mode==="signup"?"Share moments and find your community.":"Log in to catch up with your community."; $("authSubmit").textContent=mode==="signup"?"Create my account":"Log in";$("signupTab").className=mode==="signup"?"":"secondary";$("loginTab").className=mode==="login"?"":"secondary";setMessage("authMessage","");}
+async function submitAuth(){if(authBusy)return;const email=$("email").value.trim(),password=$("password").value,username=$("username").value.trim().toLowerCase();if(!email||password.length<6||(authMode==="signup"&&!/^[a-z0-9_]{3,24}$/.test(username))){setMessage("authMessage",authMode==="signup"?"Enter a valid email, password (6+ characters), and username (3–24 letters, numbers or underscores).":"Enter your email and password (at least 6 characters).");return;}authBusy=true;$("authSubmit").disabled=true;$("authSubmit").textContent="Please wait…";try{if(authMode==="signup"){const {data,error}=await db.auth.signUp({email,password,options:{data:{username,full_name:username},emailRedirectTo:location.origin+location.pathname}});if(error)throw error;if(data.session){await loadApp(data.user);}else{setMessage("authMessage","Signup request accepted. Check your email for a confirmation link. If no email arrives, signup email delivery still needs a verified sender configuration; no account is logged in yet.");}}else{const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await loadApp(data.user);}}catch(e){let m=e.message||"Something went wrong.";if(/rate limit|too many/i.test(m))m="Email sending is rate-limited. Please wait before requesting another confirmation email.";if(/invalid login credentials/i.test(m))m="Login failed. If this is a new account, confirm its email first.";setMessage("authMessage",m);}finally{authBusy=false;$("authSubmit").disabled=false;$("authSubmit").textContent=authMode==="signup"?"Create my account":"Log in";}}
+async function logout(){await db.auth.signOut();currentUser=null;profileData=null;$("appView").classList.add("hidden");$("mobileNav").classList.add("hidden");$("authView").classList.remove("hidden");$("logoutBtn").classList.add("hidden");$("topAvatar").classList.add("hidden");$("topUser").textContent="A little space to share your world";setAuthMode("login");}
+async function loadApp(user){currentUser=user;$("authView").classList.add("hidden");$("appView").classList.remove("hidden");$("mobileNav").classList.remove("hidden");$("logoutBtn").classList.remove("hidden");$("topAvatar").classList.remove("hidden");$("topAvatar").textContent=initials(user.email);$("composeAvatar").textContent=initials(user.email);$("topUser").textContent=user.email;showPage("home");await Promise.all([loadProfile(),loadFeed(),loadPeople()]);}
+function showPage(page){["home","explore","profile"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==page));document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));if(page==="profile")loadMyProfileStats();}
+async function loadProfile(){const {data,error}=await db.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();if(error){setMessage("profileMessage",error.message);return;}profileData=data;if(!data)return; $("fullName").value=data.full_name||"";$("bio").value=data.bio||"";$("profileUsername").textContent="@"+data.username;$("profileEmail").textContent=data.full_name||currentUser.email;$("profileAvatar").textContent=initials(data.username);$("composeAvatar").textContent=initials(data.username);$("topAvatar").textContent=initials(data.username);}
+async function saveProfile(){const {error}=await db.from("profiles").update({full_name:$("fullName").value.trim(),bio:$("bio").value.trim()}).eq("id",currentUser.id);setMessage("profileMessage",error?error.message:"Profile updated successfully.");if(!error)await loadProfile();}
+async function createPost(){const file=$("photo").files[0],caption=$("caption").value.trim();if(!file)return setMessage("postMessage","Choose a photo before publishing.");if(!/^image\/(jpeg|png|webp|gif)$/.test(file.type))return setMessage("postMessage","Please choose a JPG, PNG, WEBP or GIF image.");if(file.size>5*1024*1024)return setMessage("postMessage","Image must be smaller than 5 MB.");$("publishBtn").disabled=true;setMessage("postMessage","Uploading your moment…");try{const clean=file.name.replace(/[^a-zA-Z0-9._-]/g,"_"),path=currentUser.id+"/"+crypto.randomUUID()+"-"+clean;const {error:upErr}=await db.storage.from("post-images").upload(path,file,{contentType:file.type,upsert:false});if(upErr)throw upErr;const {data:url}=db.storage.from("post-images").getPublicUrl(path);const {error}=await db.from("posts").insert({user_id:currentUser.id,image_url:url.publicUrl,caption});if(error)throw error;$("photo").value="";$("caption").value="";setMessage("postMessage","Your post is live! ✨");await loadFeed();}catch(e){setMessage("postMessage",e.message||"Could not publish post.");}finally{$("publishBtn").disabled=false;}}
+async function loadFeed(){const feed=$("feed");feed.innerHTML='<div class="empty">Loading community posts…</div>';const {data:posts,error}=await db.from("posts").select("id,user_id,image_url,caption,created_at,profiles(username,full_name)").order("created_at",{ascending:false}).limit(60);if(error){feed.textContent="Could not load posts: "+error.message;return;}allPosts=posts||[];await renderFeed();}
+function filterFeed(){renderFeed();}
+async function renderFeed(){const feed=$("feed"),query=($("feedSearch")?.value||"").trim().toLowerCase();const posts=allPosts.filter(p=>!query||String(p.caption||"").toLowerCase().includes(query)||String(p.profiles?.username||"").toLowerCase().includes(query));if(!posts.length){feed.innerHTML='<div class="panel empty"><b>Nothing here yet</b>Try another search, or be the first to share a moment.</div>';return;}feed.innerHTML="";for(const post of posts){const [likesR,commentsR,likedR]=await Promise.all([db.from("likes").select("user_id").eq("post_id",post.id),db.from("comments").select("id,content,user_id,created_at,profiles(username)").eq("post_id",post.id).order("created_at",{ascending:true}),db.from("likes").select("post_id").eq("post_id",post.id).eq("user_id",currentUser.id).maybeSingle()]);if(likesR.error||commentsR.error||likedR.error){feed.textContent="Could not load post interactions. "+(likesR.error||commentsR.error||likedR.error).message;return;}const liked=!!likedR.data,likes=likesR.data||[],comments=commentsR.data||[],username=post.profiles?.username||"member";const card=document.createElement("article");card.className="post";card.dataset.search=(username+" "+(post.caption||"")).toLowerCase();card.innerHTML='<div class="posttop"><div class="userline"><div class="avatar">'+safe(initials(username))+'</div><div><strong>@'+safe(username)+'</strong><div class="tiny">'+new Date(post.created_at).toLocaleString()+'</div></div></div>'+(post.user_id===currentUser.id?'<button class="quiet" data-delete aria-label="Delete post">•••</button>':'')+'</div><img class="postimg" src="'+safe(post.image_url)+'" alt="Photo shared by @'+safe(username)+'" loading="lazy"><div class="postcaption">'+safe(post.caption)+'</div><div class="postactions"><button class="secondary" data-like>'+(liked?'♥ Liked':'♡ Like')+' · '+likes.length+'</button><span class="tiny">'+comments.length+' comments</span></div><div class="commentlist">'+comments.map(c=>'<div class="comment"><strong>@'+safe(c.profiles?.username||"member")+'</strong>'+safe(c.content)+'</div>').join("")+'</div><form class="commentform"><input data-comment maxlength="500" placeholder="Add a comment…" aria-label="Add a comment"><button type="submit">Send</button></form>';card.querySelector("[data-like]").onclick=()=>toggleLike(post.id,liked);const del=card.querySelector("[data-delete]");if(del)del.onclick=()=>deletePost(post.id);card.querySelector(".commentform").onsubmit=e=>{e.preventDefault();addComment(post.id,card.querySelector("[data-comment]"));};feed.appendChild(card);}}
+async function toggleLike(postId,liked){const r=liked?await db.from("likes").delete().eq("post_id",postId).eq("user_id",currentUser.id):await db.from("likes").insert({post_id:postId,user_id:currentUser.id});if(r.error)return alert(r.error.message);await loadFeed();}
+async function addComment(postId,input){const content=input.value.trim();if(!content)return;const {error}=await db.from("comments").insert({post_id:postId,user_id:currentUser.id,content});if(error)return alert(error.message);await loadFeed();}
+async function deletePost(id){if(!confirm("Delete this post?"))return;const {error}=await db.from("posts").delete().eq("id",id).eq("user_id",currentUser.id);if(error)return alert(error.message);await loadFeed();await loadMyProfileStats();}
+async function loadPeople(){const {data,error}=await db.from("profiles").select("id,username,full_name").neq("id",currentUser.id).order("created_at",{ascending:false}).limit(100);if(error){$("people").textContent=error.message;$("peopleList").textContent=error.message;return;}allPeople=data||[];await renderPeople();const short=allPeople.slice(0,5);$("people").innerHTML=short.length?"":'<p class="tiny">New faces will appear here as people join.</p>';for(const p of short){const line=await personElement(p);$("people").appendChild(line);}}
+async function personElement(p){const {data:following}=await db.from("follows").select("following_id").eq("follower_id",currentUser.id).eq("following_id",p.id).maybeSingle();const line=document.createElement("div");line.className="person";line.innerHTML='<div class="personname">@'+safe(p.username)+'</div><button class="secondary">'+(following?"Following":"Follow")+'</button>';line.querySelector("button").onclick=()=>toggleFollow(p.id,!!following);return line;}
+async function renderPeople(){const box=$("peopleList");if(!box)return;const q=($("peopleSearch")?.value||"").toLowerCase().trim(),list=allPeople.filter(p=>!q||p.username.toLowerCase().includes(q)||(p.full_name||"").toLowerCase().includes(q));box.innerHTML="";if(!list.length){box.innerHTML='<div class="empty">No members found.</div>';return;}for(const p of list)box.appendChild(await personElement(p));}
+async function toggleFollow(id,following){const r=following?await db.from("follows").delete().eq("follower_id",currentUser.id).eq("following_id",id):await db.from("follows").insert({follower_id:currentUser.id,following_id:id});if(r.error)return alert(r.error.message);await loadPeople();await loadMyProfileStats();}
+async function loadMyProfileStats(){if(!currentUser)return;const [posts,followers,following]=await Promise.all([db.from("posts").select("id",{count:"exact",head:true}).eq("user_id",currentUser.id),db.from("follows").select("follower_id",{count:"exact",head:true}).eq("following_id",currentUser.id),db.from("follows").select("following_id",{count:"exact",head:true}).eq("follower_id",currentUser.id)]);$("myPostCount").textContent=posts.count||0;$("myFollowerCount").textContent=followers.count||0;$("myFollowingCount").textContent=following.count||0;const {data}=await db.from("posts").select("id,user_id,image_url,caption,created_at,profiles(username,full_name)").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(30);const box=$("myPosts");box.innerHTML="";if(!data?.length){box.innerHTML='<div class="panel empty">You have not shared a post yet.</div>';return;}for(const p of data){const el=document.createElement("article");el.className="post";el.innerHTML='<img class="postimg" src="'+safe(p.image_url)+'" alt="Your post" loading="lazy"><p class="postcaption">'+safe(p.caption)+'</p><div class="tiny">'+new Date(p.created_at).toLocaleString()+'</div>';box.appendChild(el);}}
+db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!currentUser)loadApp(session.user);if(!session?.user&&currentUser){currentUser=null;$("appView").classList.add("hidden");$("mobileNav").classList.add("hidden");$("authView").classList.remove("hidden");$("logoutBtn").classList.add("hidden");}});
+(async()=>{const {data,error}=await db.auth.getSession();if(error){setMessage("authMessage",error.message);return;}if(data.session)await loadApp(data.session.user);})();
+</script></body></html>
