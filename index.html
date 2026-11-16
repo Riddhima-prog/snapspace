@@ -3,552 +3,327 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SnapSpace — Your World, Your Moments</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SnapSpace 3.0</title>
 <style>
-:root {
-  --bg:#f6f6fb; --card:#fff; --text:#262638;
-  --muted:#85859a; --accent:#e84393; --line:#ececf2;
-}
-body.dark {
-  --bg:#151520; --card:#222232; --text:#f4f4fa;
-  --muted:#aaaabd; --line:#39394a;
-}
-* {box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body {background:var(--bg);color:var(--text);transition:.2s}
-button,input {font:inherit}
-button {cursor:pointer}
-.navbar {
-  position:sticky;top:0;z-index:10;background:var(--card);
-  border-bottom:1px solid var(--line);padding:13px 5%;
-  display:flex;align-items:center;justify-content:space-between;gap:15px;
-}
-.logo {font-size:26px;font-weight:bold;color:var(--accent)}
-.search {
-  width:min(330px,35vw);padding:11px 14px;border:1px solid var(--line);
-  border-radius:12px;background:var(--bg);color:var(--text);outline:none;
-}
-.nav-links {display:flex;gap:15px;align-items:center}
-.nav-links button {
-  border:0;background:none;color:var(--text);font-size:23px;
-}
-.container {
-  max-width:1050px;margin:28px auto;display:grid;
-  grid-template-columns:minmax(0,620px) 290px;gap:30px;padding:0 15px;
-}
-.card {
-  background:var(--card);border:1px solid var(--line);
-  border-radius:14px;margin-bottom:20px;overflow:hidden;
-}
-.stories {display:flex;gap:20px;padding:17px;overflow-x:auto}
-.story {min-width:68px;text-align:center;font-size:12px;cursor:pointer}
-.story img {
-  width:62px;height:62px;border-radius:50%;object-fit:cover;
-  border:3px solid var(--accent);padding:2px;margin-bottom:5px;
-}
-.create {padding:18px}
-.create h3 {margin-bottom:13px}
-.create input[type=text] {
-  width:100%;padding:12px;border:1px solid var(--line);
-  border-radius:9px;background:var(--bg);color:var(--text);
-}
-.create-buttons {display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.primary {
-  background:var(--accent);color:white;border:0;
-  border-radius:9px;padding:11px 17px;font-weight:bold;
-}
-.secondary {
-  background:var(--bg);color:var(--text);border:1px solid var(--line);
-  border-radius:9px;padding:10px 14px;
-}
-.post-header {display:flex;align-items:center;gap:11px;padding:14px}
-.avatar {width:40px;height:40px;border-radius:50%;object-fit:cover}
-.post-image {width:100%;max-height:560px;object-fit:cover;display:block}
-.actions {padding:12px 15px;display:flex;gap:18px}
-.actions button {border:0;background:none;color:var(--text);font-size:24px}
-.actions .liked {color:#ed315b}
-.actions .saved {color:var(--accent)}
-.post-info {padding:0 15px 15px;font-size:14px;line-height:1.8}
-.comments {color:var(--muted);overflow-wrap:anywhere}
-.comment-box {
-  display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);
-}
-.comment-box input {
-  flex:1;min-width:0;border:0;outline:none;
-  background:transparent;color:var(--text);
-}
-.comment-box button {
-  border:0;background:none;color:var(--accent);font-weight:bold;
-}
-.sidebar {position:sticky;top:90px;height:max-content}
-.profile,.suggestions {padding:17px}
-.profile {display:flex;align-items:center;gap:12px}
-.profile img {width:50px;height:50px;border-radius:50%;object-fit:cover}
-.muted {color:var(--muted);font-size:13px}
-.suggestion {
-  display:flex;justify-content:space-between;align-items:center;
-  margin-top:18px;font-size:14px;gap:8px;
-}
-.follow {border:0;background:none;color:var(--accent);font-weight:bold}
-.empty {padding:25px;text-align:center;color:var(--muted)}
-.modal {
-  display:none;position:fixed;inset:0;background:#000a;z-index:30;
-  align-items:center;justify-content:center;padding:18px;
-}
-.modal.show {display:flex}
-.modal-content {
-  background:var(--card);color:var(--text);border-radius:15px;
-  padding:22px;width:min(450px,100%);max-height:85vh;overflow:auto;
-}
-.modal-content h2 {margin-bottom:15px}
-.close {
-  float:right;border:0;background:none;color:var(--text);font-size:25px;
-}
-.modal-content img {max-width:100%;border-radius:10px;margin:10px 0}
-.profile-stats {display:flex;justify-content:space-around;margin:20px 0}
-.profile-stats b {display:block;text-align:center;font-size:20px}
-.notification {
-  padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;
-}
-.hidden {display:none!important}
-@media(max-width:760px) {
-  .container {display:block;max-width:550px}
-  .sidebar {display:none}
-  .navbar {flex-wrap:wrap;justify-content:space-between}
-  .search {order:3;width:100%;max-width:none}
-  .nav-links {gap:12px}
-  .logo {font-size:22px}
+:root{--bg:#f7f5fa;--card:#fff;--text:#252235;--muted:#898598;--line:#eeeaf2;--pink:#e64d91;--purple:#8c65db}
+body.dark{--bg:#171521;--card:#242130;--text:#f7f3ff;--muted:#aaa3b8;--line:#393447}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text);transition:.25s}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.topbar{height:72px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;gap:20px;padding:0 5%;position:sticky;top:0;z-index:5}
+.logo{font-size:27px;font-weight:900;letter-spacing:-1.5px;background:linear-gradient(90deg,var(--pink),var(--purple));color:transparent;background-clip:text}
+.search{width:min(350px,35vw);padding:12px 16px;border:1px solid var(--line);border-radius:25px;background:var(--bg);color:var(--text);outline:none}
+.navtop{display:flex;gap:20px}
+.navtop button,.bottomnav button{border:0;background:none;color:var(--text);font-size:22px}
+.layout{max-width:1100px;margin:28px auto;padding:0 18px;display:grid;grid-template-columns:minmax(0,650px) 300px;gap:28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;margin-bottom:20px;overflow:hidden}
+.stories{display:flex;gap:20px;padding:17px;overflow:auto}
+.story{min-width:67px;text-align:center;font-size:12px;cursor:pointer}
+.story img{width:63px;height:63px;object-fit:cover;border-radius:50%;padding:3px;border:2px solid var(--pink);margin-bottom:6px}
+.create{padding:19px}
+.create h3{margin-bottom:13px}
+.field{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);outline:none;margin:5px 0}
+.btn{border:0;border-radius:10px;padding:11px 17px;background:linear-gradient(100deg,var(--pink),var(--purple));color:white;font-weight:700}
+.btn2{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--bg);color:var(--text)}
+.create-actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.posthead{display:flex;align-items:center;gap:11px;padding:14px}
+.avatar{height:42px;width:42px;border-radius:50%;object-fit:cover}
+.postimg{width:100%;max-height:580px;object-fit:cover;display:block}
+.actions{display:flex;gap:18px;padding:12px 15px}
+.actions button{border:0;background:none;font-size:24px;color:var(--text)}
+.actions .active{color:var(--pink)}
+.postinfo{padding:0 15px 14px;font-size:14px;line-height:1.8;overflow-wrap:anywhere}
+.muted{color:var(--muted);font-size:13px}
+.commentform{display:flex;padding:12px 14px;border-top:1px solid var(--line);gap:8px}
+.commentform input{flex:1;min-width:0;border:0;background:transparent;color:var(--text);outline:none}
+.commentform button{border:0;background:none;color:var(--pink);font-weight:bold}
+.sidebar{position:sticky;top:95px;height:max-content}
+.sideprofile{padding:17px;display:flex;align-items:center;gap:12px}
+.sideprofile img{width:50px;height:50px;border-radius:50%;object-fit:cover}
+.suggest{padding:18px}
+.suggestrow{display:flex;align-items:center;justify-content:space-between;margin-top:18px;font-size:14px;gap:5px}
+.follow{border:0;background:none;color:var(--pink);font-weight:bold}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+.page-title{padding:18px 5px 20px;font-size:24px}
+.exploregrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.exploregrid img{width:100%;aspect-ratio:1;object-fit:cover;cursor:pointer;transition:.2s}
+.exploregrid img:hover{opacity:.8}
+.profilepage{padding:25px}
+.profiletop{display:flex;align-items:center;gap:25px;padding:10px 0 25px}
+.profilepic{width:110px;height:110px;border-radius:50%;object-fit:cover}
+.stats{display:flex;gap:25px;margin:18px 0}
+.stats b{font-size:19px}
+.tabs{display:flex;justify-content:center;gap:35px;border-top:1px solid var(--line);padding:17px}
+.tabs button{border:0;background:none;color:var(--muted);font-weight:bold}
+.modal{position:fixed;inset:0;background:#0009;z-index:20;display:none;align-items:center;justify-content:center;padding:15px}
+.modal.show{display:flex}
+.modalbox{width:min(470px,100%);max-height:85vh;overflow:auto;background:var(--card);color:var(--text);border-radius:18px;padding:23px}
+.modalbox h2{margin-bottom:16px}
+.close{float:right;border:0;background:none;color:var(--text);font-size:25px}
+.modalbox img{max-width:100%;border-radius:12px;margin:10px 0}
+.notice{padding:13px 0;border-bottom:1px solid var(--line)}
+.bottomnav{display:none}
+.hidden{display:none!important}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:rise .25s ease}
+@media(max-width:780px){
+ .topbar{height:auto;padding:13px 15px;flex-wrap:wrap;gap:12px}
+ .search{order:3;width:100%;max-width:none}
+ .navtop{gap:12px}
+ .layout{display:block;margin:15px auto;padding:0 10px}
+ .sidebar{display:none}
+ .bottomnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:10;background:var(--card);border-top:1px solid var(--line);justify-content:space-around;padding:13px}
+ body{padding-bottom:65px}
+ .profiletop{gap:15px}
+ .profilepic{width:85px;height:85px}
+ .stats{gap:13px}
 }
 </style>
 </head>
 <body>
-
-<header class="navbar">
-  <div class="logo">SnapSpace.</div>
-  <input class="search" id="search"
-    placeholder="Search people or captions...">
-  <div class="nav-links">
-    <button id="homeBtn" title="Home">⌂</button>
-    <button id="profileBtn" title="Profile">👤</button>
-    <button id="notificationBtn" title="Notifications">♡</button>
-    <button id="themeBtn" title="Dark mode">☾</button>
-  </div>
+<header class="topbar">
+ <div class="logo">SnapSpace.</div>
+ <input class="search" id="search" placeholder="Search people or captions...">
+ <div class="navtop">
+  <button data-page="home" title="Home">⌂</button>
+  <button data-page="explore" title="Explore">⌕</button>
+  <button id="notifications" title="Notifications">♡</button>
+  <button id="theme" title="Dark mode">☾</button>
+ </div>
 </header>
 
-<div class="container">
+<div class="layout">
 <main>
-
-  <section class="card stories">
-    <div class="story" data-story="Your story">
-      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
-      Your story
-    </div>
-    <div class="story" data-story="Rahul">
-      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">
-      Rahul
-    </div>
-    <div class="story" data-story="Priya">
-      <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100">
-      Priya
-    </div>
-    <div class="story" data-story="Aman">
-      <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">
-      Aman
-    </div>
-    <div class="story" data-story="Neha">
-      <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100">
-      Neha
-    </div>
-  </section>
-
+ <section id="homePage">
+  <div class="card stories">
+   <div class="story" data-story="Your story"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">Your story</div>
+   <div class="story" data-story="Rahul"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">Rahul</div>
+   <div class="story" data-story="Priya"><img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100">Priya</div>
+   <div class="story" data-story="Aman"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100">Aman</div>
+   <div class="story" data-story="Neha"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100">Neha</div>
+  </div>
   <section class="card create">
-    <h3>Share a moment ✨</h3>
-    <input type="text" id="caption" placeholder="Write something about your day...">
-    <input type="file" id="photo" accept="image/*" hidden>
-    <div class="create-buttons">
-      <button class="secondary" id="choosePhoto">📷 Choose photo</button>
-      <button class="primary" id="createPost">+ Create Post</button>
-    </div>
-    <p class="muted" id="selectedPhoto" style="margin-top:10px">
-      No photo selected
-    </p>
+   <h3>✨ Create a moment</h3>
+   <input class="field" id="caption" placeholder="What's happening today?">
+   <input type="file" id="photo" accept="image/*" hidden>
+   <div class="create-actions">
+    <button class="btn2" id="choose">📷 Add photo</button>
+    <button class="btn" id="publish">Share post ↗</button>
+   </div>
+   <p class="muted" id="filelabel" style="margin-top:9px">Choose an image to share (max 1 MB)</p>
   </section>
-
   <div id="feed"></div>
-  <p class="empty hidden" id="noResults">No matching posts found.</p>
+  <div id="noresults" class="empty hidden">No matching posts found.</div>
+ </section>
 
+ <section id="explorePage" class="hidden">
+  <h2 class="page-title">Explore ✨</h2>
+  <div id="exploreGrid" class="exploregrid"></div>
+ </section>
+
+ <section id="profilePage" class="hidden card profilepage">
+  <div class="profiletop">
+   <img id="profilePhoto" class="profilepic" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300">
+   <div>
+    <h2 id="profileName">your_username</h2>
+    <p id="profileBio" class="muted">Creating memories ✨</p>
+    <div class="stats">
+     <span><b id="postCount">0</b><br>Posts</span>
+     <span><b id="followingCount">0</b><br>Following</span>
+     <span><b id="savedCount">0</b><br>Saved</span>
+    </div>
+    <button class="btn2" id="editProfile">Edit profile</button>
+   </div>
+  </div>
+  <div class="tabs"><button id="myPosts">POSTS</button><button id="mySaved">SAVED</button></div>
+  <div id="profileGrid" class="exploregrid"></div>
+ </section>
 </main>
 
 <aside class="sidebar">
-  <section class="card profile">
-    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
-    <div>
-      <b>your_username</b>
-      <p class="muted">Welcome to SnapSpace!</p>
-    </div>
-  </section>
-
-  <section class="card suggestions">
-    <b>Suggested for you</b>
-    <div id="suggestions"></div>
-  </section>
-
-  <section class="card" style="padding:17px">
-    <b>✨ Your SnapSpace</b>
-    <p class="muted" style="margin-top:8px">
-      Share moments. Find inspiration. Stay connected.
-    </p>
-    <button class="secondary" id="savedBtn" style="margin-top:13px">
-      🔖 View saved posts
-    </button>
-  </section>
+ <section class="card sideprofile">
+  <img id="sidePhoto" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
+  <div><b id="sideName">your_username</b><p class="muted">Welcome to SnapSpace</p></div>
+ </section>
+ <section class="card suggest">
+  <b>Suggested for you</b>
+  <div id="suggestions"></div>
+ </section>
+ <section class="card suggest">
+  <b>About SnapSpace</b>
+  <p class="muted" style="margin-top:10px">A place for your moments, creativity and connections.</p>
+  <button class="btn2" id="savedShortcut" style="margin-top:15px">🔖 Saved posts</button>
+ </section>
 </aside>
 </div>
 
+<nav class="bottomnav">
+ <button data-page="home">⌂</button>
+ <button data-page="explore">⌕</button>
+ <button id="mobileCreate">＋</button>
+ <button id="mobileNotice">♡</button>
+ <button data-page="profile">👤</button>
+</nav>
+
 <div class="modal" id="modal">
-  <div class="modal-content">
-    <button class="close" id="closeModal">×</button>
-    <div id="modalBody"></div>
-  </div>
+ <div class="modalbox">
+  <button class="close" id="close">×</button>
+  <div id="modalBody"></div>
+ </div>
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
-
-const defaultPosts = [
-  {
-    id:"p1",user:"rahul_photography",
-    image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900",
-    caption:"Finding peace in little moments 🌿",
-    likes:120,liked:false,comments:[]
-  },
-  {
-    id:"p2",user:"priya_diaries",
-    image:"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900",
-    caption:"Golden hour hits differently ✨",
-    likes:245,liked:false,comments:[]
-  },
-  {
-    id:"p3",user:"aman.travels",
-    image:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900",
-    caption:"Somewhere between the mountains 🏔️",
-    likes:89,liked:false,comments:[]
-  }
+const $=id=>document.getElementById(id);
+const avatarDefault="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200";
+const starter=[
+ {id:"sample1",user:"rahul_photography",image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900",caption:"Finding peace in little moments 🌿",likes:120,liked:false,comments:[]},
+ {id:"sample2",user:"priya_diaries",image:"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900",caption:"Golden hour hits differently ✨",likes:245,liked:false,comments:[]},
+ {id:"sample3",user:"aman.travels",image:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900",caption:"Somewhere between the mountains 🏔️",likes:89,liked:false,comments:[]}
 ];
-
-function loadState() {
-  try {
-    const saved = JSON.parse(localStorage.getItem("snapspace-data"));
-    if (saved && Array.isArray(saved.posts)) return saved;
-  } catch(error) {}
-  return {
-    posts:defaultPosts,
-    following:[],
-    saved:[],
-    notifications:["Welcome to SnapSpace! 🎉"]
-  };
+function initial(){
+ try{
+  const x=JSON.parse(localStorage.getItem("snapspace3"));
+  if(x&&Array.isArray(x.posts))return x;
+ }catch(e){}
+ return {posts:starter,following:[],saved:[],notifications:["Welcome to SnapSpace! 🎉"],name:"your_username",bio:"Creating memories ✨",photo:avatarDefault};
 }
+let data=initial(),chosen=null,activePage="home";
+function save(){try{localStorage.setItem("snapspace3",JSON.stringify(data));}catch(e){alert("Browser storage is full. Try a smaller photo.");}}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function notice(s){data.notifications.unshift(s);data.notifications=data.notifications.slice(0,30);save();}
+function modal(html){$("modalBody").innerHTML=html;$("modal").classList.add("show");}
+function closeModal(){$("modal").classList.remove("show");}
+$("close").onclick=closeModal;
+$("modal").onclick=e=>{if(e.target===$("modal"))closeModal();};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
 
-let state = loadState();
-let selectedImage = null;
-
-function persist() {
-  try {
-    localStorage.setItem("snapspace-data", JSON.stringify(state));
-  } catch(error) {
-    alert("Storage is full. Try removing some large uploaded photos.");
-  }
+function syncProfile(){
+ $("profileName").textContent=data.name;$("sideName").textContent=data.name;
+ $("profileBio").textContent=data.bio;$("profilePhoto").src=data.photo;$("sidePhoto").src=data.photo;
+ $("postCount").textContent=data.posts.filter(p=>p.user===data.name).length;
+ $("followingCount").textContent=data.following.length;$("savedCount").textContent=data.saved.length;
 }
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  })[char]);
+function renderFeed(){
+ const q=$("search").value.toLowerCase().trim();
+ const posts=data.posts.filter(p=>(p.user+" "+p.caption).toLowerCase().includes(q));
+ $("feed").innerHTML=posts.map(p=>`
+ <article class="card post" data-id="${esc(p.id)}">
+  <div class="posthead"><img class="avatar" src="${esc(p.user===data.name?data.photo:avatarDefault)}"><div><b>${esc(p.user)}</b><p class="muted">SnapSpace community</p></div></div>
+  <img class="postimg" src="${esc(p.image)}" alt="Post by ${esc(p.user)}">
+  <div class="actions">
+   <button data-act="like" class="${p.liked?"active":""}">${p.liked?"♥":"♡"}</button>
+   <button data-act="comment">▢</button>
+   <button data-act="save" class="${data.saved.includes(p.id)?"active":""}">${data.saved.includes(p.id)?"🔖":"♧"}</button>
+  </div>
+  <div class="postinfo"><b>${p.likes} likes</b><p><b>${esc(p.user)}</b> ${esc(p.caption)}</p>
+   <div class="muted">${p.comments.map(c=>`<p><b>${esc(c.user)}</b> ${esc(c.text)}</p>`).join("")}</div>
+  </div>
+  <form class="commentform"><input name="comment" placeholder="Add a comment..." autocomplete="off"><button>Post</button></form>
+ </article>`).join("");
+ $("noresults").classList.toggle("hidden",posts.length>0);
 }
-
-function notify(message) {
-  state.notifications.unshift(message);
-  state.notifications = state.notifications.slice(0,30);
-  persist();
+function renderSuggestions(){
+ const users=["travel_diary","foodie_world","daily_vibes","art_and_soul"];
+ $("suggestions").innerHTML=users.map(u=>`<div class="suggestrow"><b>${u}</b><button class="follow" data-follow="${u}">${data.following.includes(u)?"Following":"Follow"}</button></div>`).join("");
 }
-
-function renderFeed() {
-  const query = $("search").value.toLowerCase().trim();
-
-  const matching = state.posts.filter(post =>
-    (post.user + " " + post.caption).toLowerCase().includes(query)
-  );
-
-  $("feed").innerHTML = matching.map(post => `
-    <article class="card post" data-id="${escapeHTML(post.id)}">
-      <div class="post-header">
-        <img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
-        <b>${escapeHTML(post.user)}</b>
-      </div>
-
-      <img class="post-image" src="${escapeHTML(post.image)}">
-
-      <div class="actions">
-        <button data-action="like" class="${post.liked ? "liked" : ""}">
-          ${post.liked ? "♥" : "♡"}
-        </button>
-        <button data-action="comment" title="Comment">💬</button>
-        <button data-action="save"
-          class="${state.saved.includes(post.id) ? "saved" : ""}">
-          ${state.saved.includes(post.id) ? "🔖" : "♧"}
-        </button>
-      </div>
-
-      <div class="post-info">
-        <b>${post.likes} likes</b>
-        <p><b>${escapeHTML(post.user)}</b> ${escapeHTML(post.caption)}</p>
-        <div class="comments">
-          ${post.comments.map(comment =>
-            `<p><b>${escapeHTML(comment.user)}:</b> ${escapeHTML(comment.text)}</p>`
-          ).join("")}
-        </div>
-      </div>
-
-      <form class="comment-box">
-        <input name="comment" placeholder="Add a comment..." autocomplete="off">
-        <button type="submit">Post</button>
-      </form>
-    </article>
-  `).join("");
-
-  $("noResults").classList.toggle("hidden", matching.length > 0);
+function renderExplore(){
+ $("exploreGrid").innerHTML=data.posts.map(p=>`<img src="${esc(p.image)}" alt="Explore post" data-explore="${esc(p.id)}">`).join("");
 }
-
-const suggestedUsers = [
-  "travel_diary","foodie_world","daily_vibes","art_and_soul"
-];
-
-function renderSuggestions() {
-  $("suggestions").innerHTML = suggestedUsers.map(user => `
-    <div class="suggestion">
-      <b>${user}</b>
-      <button class="follow" data-user="${user}">
-        ${state.following.includes(user) ? "Following" : "Follow"}
-      </button>
-    </div>
-  `).join("");
+function renderProfile(saved=false){
+ const posts=saved?data.posts.filter(p=>data.saved.includes(p.id)):data.posts.filter(p=>p.user===data.name);
+ $("profileGrid").innerHTML=posts.map(p=>`<img src="${esc(p.image)}" alt="Profile post">`).join("");
 }
-
-function openModal(content) {
-  $("modalBody").innerHTML = content;
-  $("modal").classList.add("show");
+function render(){syncProfile();renderFeed();renderSuggestions();renderExplore();renderProfile();}
+function page(name){
+ activePage=name;
+ ["home","explore","profile"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==name));
+ if(name==="profile")renderProfile();
+ if(name==="explore")renderExplore();
+ window.scrollTo({top:0,behavior:"smooth"});
 }
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>page(b.dataset.page));
+$("search").addEventListener("input",()=>{page("home");renderFeed();});
+$("theme").onclick=()=>{
+ document.body.classList.toggle("dark");
+ localStorage.setItem("snapspace3-theme",document.body.classList.contains("dark")?"dark":"light");
+};
+if(localStorage.getItem("snapspace3-theme")==="dark")document.body.classList.add("dark");
 
-function closeModal() {
-  $("modal").classList.remove("show");
+$("choose").onclick=()=>$("photo").click();
+$("photo").onchange=e=>{
+ chosen=e.target.files[0]||null;
+ $("filelabel").textContent=chosen?chosen.name:"Choose an image";
+};
+$("publish").onclick=()=>{
+ if(!chosen){alert("Please choose a photo first.");return;}
+ if(!chosen.type.startsWith("image/")){alert("Choose a valid image.");return;}
+ if(chosen.size>1024*1024){alert("Choose an image smaller than 1 MB.");return;}
+ const reader=new FileReader();
+ reader.onload=()=>{
+  data.posts.unshift({id:"post"+Date.now(),user:data.name,image:reader.result,caption:$("caption").value.trim(),likes:0,liked:false,comments:[]});
+  notice("Your post was published!");save();chosen=null;$("photo").value="";$("caption").value="";$("filelabel").textContent="Choose an image";
+  $("search").value="";render();page("home");
+ };
+ reader.readAsDataURL(chosen);
+};
+$("feed").addEventListener("click",e=>{
+ const b=e.target.closest("[data-act]");if(!b)return;
+ const el=b.closest(".post"),p=data.posts.find(x=>x.id===el.dataset.id);if(!p)return;
+ if(b.dataset.act==="like"){p.liked=!p.liked;p.likes=Math.max(0,p.likes+(p.liked?1:-1));}
+ if(b.dataset.act==="save"){
+  data.saved=data.saved.includes(p.id)?data.saved.filter(x=>x!==p.id):[...data.saved,p.id];
+  notice(data.saved.includes(p.id)?"Post saved":"Post removed from saved posts");
+ }
+ if(b.dataset.act==="comment"){el.querySelector('[name="comment"]').focus();return;}
+ save();render();
+});
+$("feed").addEventListener("submit",e=>{
+ if(!e.target.classList.contains("commentform"))return;
+ e.preventDefault();
+ const el=e.target.closest(".post"),p=data.posts.find(x=>x.id===el.dataset.id);
+ const value=e.target.elements.comment.value.trim();if(!value)return;
+ p.comments.push({user:data.name,text:value});notice("You commented on a post.");save();render();
+});
+$("suggestions").onclick=e=>{
+ const b=e.target.closest("[data-follow]");if(!b)return;
+ const u=b.dataset.follow;
+ data.following=data.following.includes(u)?data.following.filter(x=>x!==u):[...data.following,u];
+ notice(data.following.includes(u)?"You followed "+u:"You unfollowed "+u);save();renderSuggestions();syncProfile();
+};
+document.querySelectorAll(".story").forEach(s=>s.onclick=()=>{
+ modal(`<h2>✨ ${esc(s.dataset.story)}'s Story</h2><p>Enjoying little moments and sharing memories!</p><p class="muted" style="margin-top:15px">Stories are currently demo content.</p>`);
+});
+$("editProfile").onclick=()=>{
+ modal(`<h2>Edit your profile</h2>
+ <label>Username</label><input class="field" id="editName" value="${esc(data.name)}">
+ <label>Bio</label><textarea class="field" id="editBio">${esc(data.bio)}</textarea>
+ <label>Profile photo URL</label><input class="field" id="editPhoto" value="${esc(data.photo)}">
+ <button class="btn" id="saveProfile">Save profile</button>`);
+ $("saveProfile").onclick=()=>{
+  const n=$("editName").value.trim();if(!n){alert("Username cannot be empty.");return;}
+  data.name=n;data.bio=$("editBio").value.trim();data.photo=$("editPhoto").value.trim()||avatarDefault;
+  save();render();closeModal();
+ };
+};
+$("myPosts").onclick=()=>renderProfile(false);
+$("mySaved").onclick=()=>renderProfile(true);
+function showNotifications(){
+ modal("<h2>♡ Notifications</h2>"+(data.notifications.length?data.notifications.map(n=>`<div class="notice">${esc(n)}</div>`).join(""):"<p>No notifications yet.</p>"));
 }
-
-$("closeModal").addEventListener("click",closeModal);
-$("modal").addEventListener("click",event => {
-  if(event.target === $("modal")) closeModal();
-});
-
-$("search").addEventListener("input",renderFeed);
-
-$("homeBtn").addEventListener("click",() => {
-  $("search").value = "";
-  renderFeed();
-  window.scrollTo({top:0,behavior:"smooth"});
-});
-
-$("themeBtn").addEventListener("click",() => {
-  document.body.classList.toggle("dark");
-  localStorage.setItem("snapspace-theme",
-    document.body.classList.contains("dark") ? "dark" : "light");
-});
-
-if(localStorage.getItem("snapspace-theme") === "dark") {
-  document.body.classList.add("dark");
+$("notifications").onclick=showNotifications;$("mobileNotice").onclick=showNotifications;
+function showSaved(){
+ page("profile");renderProfile(true);
 }
-
-$("choosePhoto").addEventListener("click",() => $("photo").click());
-
-$("photo").addEventListener("change",event => {
-  selectedImage = event.target.files[0] || null;
-  $("selectedPhoto").textContent =
-    selectedImage ? selectedImage.name : "No photo selected";
-});
-
-$("createPost").addEventListener("click",() => {
-  if(!selectedImage) {
-    alert("Please choose a photo first.");
-    return;
-  }
-
-  if(!selectedImage.type.startsWith("image/")) {
-    alert("Please choose a valid image.");
-    return;
-  }
-
-  if(selectedImage.size > 2 * 1024 * 1024) {
-    alert("Please choose an image smaller than 2 MB.");
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    const caption = $("caption").value.trim();
-
-    state.posts.unshift({
-      id:"post-" + Date.now(),
-      user:"your_username",
-      image:reader.result,
-      caption,
-      likes:0,
-      liked:false,
-      comments:[]
-    });
-
-    persist();
-    notify("Your new post was created!");
-    $("caption").value = "";
-    $("photo").value = "";
-    selectedImage = null;
-    $("selectedPhoto").textContent = "No photo selected";
-    $("search").value = "";
-    renderFeed();
-    alert("Your post has been published! 🎉");
-  };
-
-  reader.onerror = () => alert("Could not read this image. Try another.");
-  reader.readAsDataURL(selectedImage);
-});
-
-$("feed").addEventListener("click",event => {
-  const button = event.target.closest("button[data-action]");
-  if(!button) return;
-
-  const postElement = button.closest(".post");
-  const post = state.posts.find(p => p.id === postElement.dataset.id);
-  if(!post) return;
-
-  const action = button.dataset.action;
-
-  if(action === "like") {
-    post.liked = !post.liked;
-    post.likes = Math.max(0,post.likes + (post.liked ? 1 : -1));
-    persist();
-    renderFeed();
-  }
-
-  if(action === "comment") {
-    postElement.querySelector('input[name="comment"]').focus();
-  }
-
-  if(action === "save") {
-    if(state.saved.includes(post.id)) {
-      state.saved = state.saved.filter(id => id !== post.id);
-    } else {
-      state.saved.push(post.id);
-      notify("You saved a post.");
-    }
-    persist();
-    renderFeed();
-  }
-});
-
-$("feed").addEventListener("submit",event => {
-  if(!event.target.classList.contains("comment-box")) return;
-  event.preventDefault();
-
-  const postElement = event.target.closest(".post");
-  const post = state.posts.find(p => p.id === postElement.dataset.id);
-  const input = event.target.elements.comment;
-  const value = input.value.trim();
-
-  if(!value || !post) return;
-
-  post.comments.push({user:"you",text:value});
-  notify("You commented on a post.");
-  persist();
-  renderFeed();
-});
-
-$("suggestions").addEventListener("click",event => {
-  const button = event.target.closest("button[data-user]");
-  if(!button) return;
-
-  const user = button.dataset.user;
-
-  if(state.following.includes(user)) {
-    state.following = state.following.filter(name => name !== user);
-  } else {
-    state.following.push(user);
-    notify("You followed " + user + ".");
-  }
-
-  persist();
-  renderSuggestions();
-});
-
-document.querySelectorAll(".story").forEach(story => {
-  story.addEventListener("click",() => {
-    const name = story.dataset.story;
-    const messages = {
-      "Your story":"Share your own moments using the Create Post section!",
-      "Rahul":"Enjoying the little things 🌿",
-      "Priya":"Golden hour ✨",
-      "Aman":"Adventure awaits 🏔️",
-      "Neha":"Little moments 💕"
-    };
-    openModal(`<h2>📸 ${escapeHTML(name)}'s Story</h2>
-      <p>${escapeHTML(messages[name] || "")}</p>`);
-  });
-});
-
-$("profileBtn").addEventListener("click",() => {
-  const ownPosts = state.posts.filter(p => p.user === "your_username").length;
-
-  openModal(`
-    <h2>👤 your_username</h2>
-    <p class="muted">Welcome to your SnapSpace profile!</p>
-    <div class="profile-stats">
-      <div><b>${ownPosts}</b>Posts</div>
-      <div><b>${state.following.length}</b>Following</div>
-      <div><b>${state.saved.length}</b>Saved</div>
-    </div>
-    <p>✨ Sharing little moments and big memories.</p>
-  `);
-});
-
-$("notificationBtn").addEventListener("click",() => {
-  openModal("<h2>♡ Notifications</h2>" +
-    (state.notifications.length
-      ? state.notifications.map(n =>
-          `<div class="notification">${escapeHTML(n)}</div>`
-        ).join("")
-      : "<p>No notifications yet.</p>"));
-});
-
-$("savedBtn").addEventListener("click",showSaved);
-
-function showSaved() {
-  const posts = state.posts.filter(p => state.saved.includes(p.id));
-
-  openModal("<h2>🔖 Saved Posts</h2>" +
-    (posts.length
-      ? posts.map(p => `
-          <div style="margin-bottom:18px">
-            <b>${escapeHTML(p.user)}</b>
-            <img src="${escapeHTML(p.image)}" alt="Saved post">
-            <p>${escapeHTML(p.caption)}</p>
-          </div>
-        `).join("")
-      : "<p>No saved posts yet. Tap the bookmark icon to save a post.</p>"));
-}
-
-document.addEventListener("keydown",event => {
-  if(event.key === "Escape") closeModal();
-});
-
-renderFeed();
-renderSuggestions();
+$("savedShortcut").onclick=showSaved;
+$("mobileCreate").onclick=()=>{page("home");$("caption").focus();window.scrollTo({top:300,behavior:"smooth"});};
+$("exploreGrid").onclick=e=>{
+ const img=e.target.closest("[data-explore]");if(!img)return;
+ const p=data.posts.find(x=>x.id===img.dataset.explore);if(!p)return;
+ modal(`<h2>${esc(p.user)}</h2><img src="${esc(p.image)}"><p>${esc(p.caption)}</p><p class="muted">${p.likes} likes</p>`);
+};
+render();
 </script>
 </body>
 </html>
