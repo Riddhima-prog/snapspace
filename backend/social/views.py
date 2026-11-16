@@ -145,6 +145,7 @@ class MessagesView(APIView):
         for msg in qs:
             other=msg.recipient if msg.sender_id==request.user.id else msg.sender
             if other.id in seen: continue
+            if other.profile.is_private and not Follow.objects.filter(follower=request.user,following=other,status="accepted").exists(): continue
             seen.add(other.id)
             rows.append({"user":str(other.id),"username":other.profile.username,"last_message":msg.content,"created_at":msg.created_at})
         return Response(rows)
