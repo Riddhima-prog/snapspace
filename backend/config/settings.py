@@ -24,6 +24,14 @@ if not DEBUG:
     SECURE_SSL_REDIRECT=os.getenv("SECURE_SSL_REDIRECT","True").lower()=="true"
     SESSION_COOKIE_SECURE=True
     CSRF_COOKIE_SECURE=True
+EMAIL_BACKEND=os.getenv("EMAIL_BACKEND","django.core.mail.backends.console.EmailBackend")
+DEFAULT_FROM_EMAIL=os.getenv("DEFAULT_FROM_EMAIL","SnapSpace <no-reply@snapspace.local>")
+EMAIL_HOST=os.getenv("EMAIL_HOST","")
+EMAIL_PORT=int(os.getenv("EMAIL_PORT","587"))
+EMAIL_HOST_USER=os.getenv("EMAIL_HOST_USER","")
+EMAIL_HOST_PASSWORD=os.getenv("EMAIL_HOST_PASSWORD","")
+EMAIL_USE_TLS=os.getenv("EMAIL_USE_TLS","True").lower()=="true"
+EMAIL_USE_SSL=os.getenv("EMAIL_USE_SSL","False").lower()=="true"
 CSRF_TRUSTED_ORIGINS=[x.strip() for x in os.getenv("CSRF_TRUSTED_ORIGINS","").split(",") if x.strip()]
 CORS_ALLOWED_ORIGINS=[x.strip() for x in os.getenv("CORS_ALLOWED_ORIGINS","http://localhost:5000").split(",") if x.strip()]
 REST_FRAMEWORK={"DEFAULT_AUTHENTICATION_CLASSES":["rest_framework_simplejwt.authentication.JWTAuthentication"],"DEFAULT_PERMISSION_CLASSES":["rest_framework.permissions.IsAuthenticated"],"DEFAULT_THROTTLE_CLASSES":["rest_framework.throttling.AnonRateThrottle","rest_framework.throttling.UserRateThrottle"],"DEFAULT_THROTTLE_RATES":{"anon":"30/minute","user":"120/minute"}}
