@@ -233,7 +233,17 @@ h4 {
 <div class="container">
 
 <main>
+<div style="background:white;padding:15px;margin-bottom:15px;border:1px solid #ddd;border-radius:10px;">
+  <button onclick="document.getElementById('photoUpload').click()"
+  style="background:#d94682;color:white;border:0;padding:12px 20px;border-radius:8px;cursor:pointer;">
+  + Create Post
+  </button>
 
+  <input type="file" id="photoUpload" accept="image/*" hidden onchange="createPost(event)">
+
+  <input id="captionInput" placeholder="Write a caption..."
+  style="padding:10px;border:1px solid #ddd;border-radius:8px;margin-left:10px;max-width:65%;">
+</div>
 <section class="stories">
   <div class="story">
     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
@@ -394,6 +404,49 @@ function followUser(button) {
   } else {
     button.textContent = "Follow";
   }
+}
+  function createPost(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    alert("Please select an image.");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Image must be smaller than 5 MB.");
+    return;
+  }
+
+  const imageURL = URL.createObjectURL(file);
+  const caption = document.getElementById("captionInput").value;
+
+  const post = document.createElement("article");
+  post.className = "post";
+
+  const header = document.createElement("div");
+  header.className = "post-header";
+  header.textContent = "your_username";
+
+  const image = document.createElement("img");
+  image.className = "post-image";
+  image.src = imageURL;
+
+  const info = document.createElement("div");
+  info.className = "post-info";
+  info.textContent = "0 likes";
+
+  const description = document.createElement("p");
+  description.textContent = caption;
+
+  info.appendChild(description);
+  post.append(header, image, info);
+
+  document.getElementById("feed").prepend(post);
+
+  document.getElementById("captionInput").value = "";
+  event.target.value = "";
 }
 </script>
 
