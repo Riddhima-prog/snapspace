@@ -35,11 +35,12 @@ async function uploadToCloudinary(file){
  if(!file.type.startsWith('image/')&&!file.type.startsWith('video/'))throw Error('Choose an image or video file.');
  if(file.size>50*1024*1024)throw Error('The file must be 50 MB or smaller.');
  const config=await api('/uploads/config/');
- if(!config.cloud_name||!config.upload_preset)throw Error('Cloud uploads are not configured yet. Cloudinary setup is still required.');
- const form=new FormData();form.append('file',file);form.append('upload_preset',config.upload_preset);
+ if(!config.cloud_name||!config.api_key)throw Error('Cloudinary is not connected yet. Add its cloud name and API key in Render Environment.');
+ const signed=await api('/uploads/signature/',{method:'POST',body:'{}'});
+ const form=new FormData();form.append('file',file);form.append('api_key',config.api_key);form.append('timestamp',signed.timestamp);form.append('folder',signed.folder);form.append('signature',signed.signature);
  const response=await fetch('https://api.cloudinary.com/v1_1/'+encodeURIComponent(config.cloud_name)+'/auto/upload',{method:'POST',body:form});
  const data=await response.json().catch(()=>({}));
- if(!response.ok)throw Error(data.error?.message||'Media upload failed. Check the Cloudinary upload preset.');
+ if(!response.ok)throw Error(data.error?.message||'Media upload failed. Check your Cloudinary settings.');
  return {url:data.secure_url,type:file.type.startsWith('video/')?'video':'image'};
 }
 
