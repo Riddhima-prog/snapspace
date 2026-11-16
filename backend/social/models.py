@@ -1,4 +1,6 @@
 import uuid
+from datetime import timedelta
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
@@ -63,3 +65,21 @@ class DirectMessage(models.Model):
     class Meta:
         ordering=["created_at"]
         indexes=[models.Index(fields=["sender","recipient","created_at"]),models.Index(fields=["recipient","sender","created_at"])]
+
+
+def story_expiry():
+    return timezone.now() + timedelta(hours=24)
+
+
+class Story(models.Model):
+    MEDIA_TYPES = [("image", "Image"), ("video", "Video")]
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="stories")
+    media_url = models.URLField(max_length=2048)
+    media_type = models.CharField(max_length=5, choices=MEDIA_TYPES)
+    caption = models.CharField(max_length=500, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(default=story_expiry, db_index=True)
+
+    class Meta:
+        ordering = ["created_at"]
