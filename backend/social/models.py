@@ -11,6 +11,7 @@ class Profile(models.Model):
     full_name=models.CharField(max_length=60,blank=True)
     bio=models.CharField(max_length=250,blank=True)
     avatar_url=models.URLField(blank=True)
+    is_private=models.BooleanField(default=False)
     created_at=models.DateTimeField(auto_now_add=True)
     def __str__(self): return f"@{self.username}"
 class Post(models.Model):
@@ -37,6 +38,7 @@ class Comment(models.Model):
 class Follow(models.Model):
     follower=models.ForeignKey(User,on_delete=models.CASCADE,related_name="following_edges")
     following=models.ForeignKey(User,on_delete=models.CASCADE,related_name="follower_edges")
+    status=models.CharField(max_length=10,choices=[("pending","Pending"),("accepted","Accepted")],default="accepted")
     created_at=models.DateTimeField(auto_now_add=True)
     class Meta:
         constraints=[models.UniqueConstraint(fields=["follower","following"],name="unique_follow_edge"),models.CheckConstraint(condition=~models.Q(follower=models.F("following")),name="prevent_self_follow")]
@@ -49,3 +51,15 @@ class Notification(models.Model):
     is_read=models.BooleanField(default=False)
     created_at=models.DateTimeField(auto_now_add=True)
     class Meta: ordering=["-created_at"]
+
+
+class DirectMessage(models.Model):
+    id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    sender=models.ForeignKey(User,on_delete=models.CASCADE,related_name="sent_direct_messages")
+    recipient=models.ForeignKey(User,on_delete=models.CASCADE,related_name="received_direct_messages")
+    content=models.CharField(max_length=2000)
+    created_at=models.DateTimeField(auto_now_add=True)
+    read_at=models.DateTimeField(null=True,blank=True)
+    class Meta:
+        ordering=["created_at"]
+        indexes=[models.Index(fields=["sender","recipient","created_at"]),models.Index(fields=["recipient","sender","created_at"])]
