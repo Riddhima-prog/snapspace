@@ -8,10 +8,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics,permissions,status,viewsets
 from django.db.models import Q, Max
 from django.utils import timezone
+from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Profile,Post,Like,Comment,Follow,Notification,DirectMessage
+from .models import Profile,Post,Like,Comment,Follow,Notification,DirectMessage,Story
 from .serializers import RegisterSerializer,ProfileSerializer,PostSerializer,CommentSerializer,NotificationSerializer
 from .permissions import IsOwnerOrReadOnly
 User=get_user_model()
@@ -169,3 +170,54 @@ class MessagesView(APIView):
 class NotificationList(generics.ListAPIView):
     serializer_class=NotificationSerializer
     def get_queryset(self): return Notification.objects.filter(recipient=self.request.user).select_related("actor","actor__profile")[:100]
+
+
+class UploadConfigView(APIView):
+    """Expose only the public Cloudinary unsigned-upload configuration."""
+    def get(self, request):
+        return Response({
+            "cloud_name": settings.CLOUDINARY_CLOUD_NAME,
+            "upload_preset": settings.CLOUDINARY_UPLOAD_PRESET,
+        })
+
+
+class StoriesView(APIView):
+    def get(self, request):
+        visible_profiles = Profile.objects.filter(
+            Q(is_private=False) | Q(user=request.user) |
+            Q(user__follower_edges__follower=request.user, user__follower_edges__status="accepted")
+        )
+        stories = Story.objects.filter(
+            user__profile__in=visible_profiles,
+            expires_at__gt=timezone.now()
+        ).select_related("user", "user__profile").order_by("created_at").distinct()
+        return Response([{
+            "id": str(story.id),
+            "user": str(story.user_id),
+            "username": story.user.profile.username,
+            "media_url": story.media_url,
+            "media_type": story.media_type,
+            "caption": story.caption,
+            "created_at": story.created_at,
+            "expires_at": story.expires_at,
+            "mine": story.user_id == request.user.id,
+        } for story in stories])
+
+    def post(self, request):
+        media_url = (request.data.get("media_url") or "").strip()
+        media_type = request.data.get("media_type")
+        caption = (request.data.get("caption") or "").strip()
+        if not media_url.startswith("https://"):
+            return Response({"detail": "Upload your photo or video first."}, status=400)
+        if media_type not in ("image", "video"):
+            return Response({"detail": "Choose an image or video."}, status=400)
+        if len(caption) > 500:
+            return Response({"detail": "Story caption must be 500 characters or fewer."}, status=400)
+        story = Story.objects.create(
+            user=request.user, media_url=media_url,
+            media_type=media_type, caption=caption
+        )
+        return Response({
+            "id": str(story.id), "media_url": story.media_url,
+            "media_type": story.media_type, "expires_at": story.expires_at
+        }, status=201)
