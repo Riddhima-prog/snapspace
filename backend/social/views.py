@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from django.utils.crypto import get_random_string
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics,permissions,status,viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -10,6 +12,21 @@ User=get_user_model()
 class HealthView(APIView):
     permission_classes=[permissions.AllowAny]
     def get(self,request): return Response({"status":"ok","service":"snapspace-api"})
+class DemoLoginView(APIView):
+    permission_classes=[permissions.AllowAny]
+    def post(self,request):
+        # Shared public demo account: convenient for trying the app without signup.
+        user,created=User.objects.get_or_create(
+            username="snapspace_demo",
+            defaults={"email":"demo@snapspace.local","is_active":True},
+        )
+        if created:
+            user.set_password(get_random_string(48))
+            user.save()
+        Profile.objects.get_or_create(user=user,defaults={"username":"snapspace_demo","full_name":"SnapSpace Demo"})
+        refresh=RefreshToken.for_user(user)
+        return Response({"refresh":str(refresh),"access":str(refresh.access_token)})
+
 class RegisterView(generics.CreateAPIView):
     serializer_class=RegisterSerializer
     permission_classes=[permissions.AllowAny]
