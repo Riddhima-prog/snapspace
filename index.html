@@ -83,6 +83,7 @@ const SUPABASE_KEY = "sb_publishable_rqh7QKmoSJxmHHED5ZvS6Q_HYUIBKx-";
 
 const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let currentUser = null;
+let signupInProgress = false;
 
 function safe(v){
  return String(v??"").replace(/[&<>"']/g,c=>({
@@ -104,6 +105,8 @@ function friendlyAuthError(error){
 }
 
 async function signup(){
+ if(signupInProgress)return;
+
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("password").value;
  const username=document.getElementById("username").value.trim().toLowerCase();
@@ -111,19 +114,34 @@ async function signup(){
  if(!email||password.length<6||!username){
   return msg("authMessage","Enter your email, password (6+ characters) and username.");
  }
- const {data,error}=await db.auth.signUp({
-  email,password,
-  options:{data:{username,full_name:username},emailRedirectTo:window.location.origin+window.location.pathname}
- });
- if(error)return msg("authMessage",friendlyAuthError(error));
- if(data.session){
-  msg("authMessage","Account created!");
-  await loadApp(data.user);
- }else{
-  msg("authMessage","Check your email to confirm your account, then log in.");
+
+ signupInProgress=true;
+ const signupButton=document.querySelector('#auth button[onclick="signup()"]');
+ if(signupButton){signupButton.disabled=true;signupButton.textContent="Please wait...";}
+
+ try{
+  const {data,error}=await db.auth.signUp({
+   email,password,
+   options:{
+    data:{username,full_name:username},
+    emailRedirectTo:window.location.origin+window.location.pathname
+   }
+  });
+
+  if(error)return msg("authMessage",friendlyAuthError(error));
+  if(data.session){
+   msg("authMessage","Account created!");
+   await loadApp(data.user);
+  }else{
+   msg("authMessage","If this is a new account, check your email for confirmation. Do not repeatedly request emails; configure custom SMTP if email sending is rate-limited.");
+  }
+ }catch(error){
+  msg("authMessage",friendlyAuthError(error));
+ }finally{
+  signupInProgress=false;
+  if(signupButton){signupButton.disabled=false;signupButton.textContent="Create account";}
  }
 }
-
 async function login(){
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("password").value;
