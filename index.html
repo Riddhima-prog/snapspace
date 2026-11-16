@@ -3,37 +3,45 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SnapSpace</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SnapSpace — Connect & Share</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#fafafa;color:#222;font-family:Arial,sans-serif}
-header{height:65px;background:white;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:space-around;position:sticky;top:0;z-index:5}
-.logo{font-size:25px;font-weight:bold;color:#8b35d1}.wrap{max-width:950px;margin:25px auto;display:grid;grid-template-columns:minmax(0,600px) 280px;gap:25px;padding:0 12px}
-.card{background:white;border:1px solid #ddd;border-radius:12px;margin-bottom:18px;padding:16px}
-input,textarea,button{font:inherit;padding:11px;border:1px solid #ddd;border-radius:8px}
-input,textarea{width:100%;margin:6px 0}button{cursor:pointer;background:#853bd1;color:white;border:0;font-weight:bold}
-button.secondary{background:#eee;color:#333}button:disabled{opacity:.5}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.postimg{width:100%;max-height:550px;object-fit:contain;background:#f2f2f2;border-radius:8px;margin-top:10px}
-.muted{color:#777;font-size:13px}.hidden{display:none}.posthead{display:flex;justify-content:space-between;align-items:center}
-.story{display:inline-block;border:2px solid #c14bd5;border-radius:50%;padding:12px;margin:5px}
-#auth{max-width:420px;margin:70px auto}.comment{padding:7px 0;border-top:1px solid #eee}
-@media(max-width:700px){.wrap{display:block}header{justify-content:space-between;padding:0 15px}.side{display:none}}
+*{box-sizing:border-box}
+body{margin:0;background:#faf8fc;color:#292333;font-family:Arial,sans-serif}
+header{height:65px;background:white;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;padding:0 max(calc((100% - 950px)/2),18px);position:sticky;top:0;z-index:5}
+.logo{font-size:25px;font-weight:bold;color:#913cce}
+button{cursor:pointer;background:#913cce;color:white;border:0;border-radius:8px;padding:11px 16px;font-weight:bold}
+button.secondary{background:#f0e9f7;color:#67339a}
+input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:7px 0;font:inherit}
+textarea{resize:vertical;min-height:65px}
+.card{background:white;border:1px solid #eee;border-radius:13px;padding:17px;margin-bottom:18px}
+.wrap{max-width:950px;margin:25px auto;display:grid;grid-template-columns:minmax(0,620px) 280px;gap:24px;padding:0 12px}
+.hidden{display:none!important}
+.muted{color:#888;font-size:13px}
+#auth{max-width:420px;margin:65px auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.posthead{display:flex;align-items:center;justify-content:space-between}
+.postimg{width:100%;max-height:550px;object-fit:contain;background:#f5f1f7;border-radius:9px;margin-top:12px}
+.comment{border-top:1px solid #eee;padding:8px 0;font-size:14px}
+.person{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0}
+@media(max-width:700px){.wrap{display:block}.side{display:none}header{padding:0 15px}}
 </style>
 </head>
 <body>
+
 <header>
  <div class="logo">SnapSpace ✦</div>
- <div id="userLabel" class="muted">Not signed in</div>
+ <span id="userLabel" class="muted">Welcome!</span>
  <button id="logoutBtn" class="secondary hidden" onclick="logout()">Log out</button>
 </header>
 
 <section id="auth" class="card">
- <h2>Welcome to SnapSpace</h2>
- <p class="muted">Create an account or log in to join the community.</p>
+ <h2>Welcome to SnapSpace 💜</h2>
+ <p class="muted">Share moments. Discover people. Connect everywhere.</p>
  <input id="email" type="email" placeholder="Email address">
  <input id="password" type="password" placeholder="Password (minimum 6 characters)">
- <input id="username" placeholder="Username (for sign up)">
+ <input id="username" placeholder="Username (for new accounts)">
  <div class="actions">
   <button onclick="signup()">Create account</button>
   <button class="secondary" onclick="login()">Log in</button>
@@ -44,20 +52,20 @@ button.secondary{background:#eee;color:#333}button:disabled{opacity:.5}
 <div id="app" class="wrap hidden">
  <main>
   <section class="card">
-   <h3>Share a moment 📸</h3>
+   <h3>✨ Share a moment</h3>
    <input id="photo" type="file" accept="image/*">
-   <textarea id="caption" placeholder="Write a caption..."></textarea>
+   <textarea id="caption" placeholder="What's happening?"></textarea>
    <button onclick="createPost()">Publish post</button>
    <p id="postMessage" class="muted"></p>
   </section>
-  <h3>Your community feed</h3>
-  <div id="feed"></div>
+  <h3>Community feed</h3>
+  <div id="feed">Loading...</div>
  </main>
  <aside class="side">
   <section class="card">
    <h3>Your profile</h3>
-   <input id="fullName" placeholder="Your full name">
-   <textarea id="bio" placeholder="Your bio"></textarea>
+   <input id="fullName" placeholder="Full name">
+   <textarea id="bio" placeholder="Write your bio"></textarea>
    <button onclick="saveProfile()">Save profile</button>
    <p id="profileMessage" class="muted"></p>
   </section>
@@ -69,40 +77,46 @@ button.secondary{background:#eee;color:#333}button:disabled{opacity:.5}
 </div>
 
 <script>
-/* ADD YOUR SUPABASE DETAILS BELOW */
+/* SUPABASE CONNECTION */
 const SUPABASE_URL = "https://wtlexluattzefvzkcxjh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_rqh7QKmoSJxmHHED5ZvS6Q_HYUIBKx-";
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let currentUser = null;
 
-function safe(value){
- return String(value ?? "").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+function safe(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  }[c]));
 }
-function message(id,text){document.getElementById(id).textContent=text;}
+function msg(id,t){document.getElementById(id).textContent=t;}
 
 async function signup(){
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("password").value;
  const username=document.getElementById("username").value.trim().toLowerCase();
+
  if(!email||password.length<6||!username){
-  return message("authMessage","Enter email, a password of at least 6 characters, and a username.");
+  return msg("authMessage","Enter your email, password (6+ characters) and username.");
  }
  const {data,error}=await db.auth.signUp({
-  email,password,options:{data:{username,full_name:username}}
+  email,password,
+  options:{data:{username,full_name:username}}
  });
- if(error)return message("authMessage",error.message);
- message("authMessage",data.session?"Account created!":"Check your email to confirm your account, then log in.");
- if(data.session) await loadApp(data.session.user);
+ if(error)return msg("authMessage",error.message);
+ if(data.session){
+  msg("authMessage","Account created!");
+  await loadApp(data.user);
+ }else{
+  msg("authMessage","Check your email to confirm your account, then log in.");
+ }
 }
 
 async function login(){
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("password").value;
  const {data,error}=await db.auth.signInWithPassword({email,password});
- if(error)return message("authMessage",error.message);
+ if(error)return msg("authMessage",error.message);
  await loadApp(data.user);
 }
 
@@ -112,7 +126,7 @@ async function logout(){
  document.getElementById("app").classList.add("hidden");
  document.getElementById("auth").classList.remove("hidden");
  document.getElementById("logoutBtn").classList.add("hidden");
- document.getElementById("userLabel").textContent="Not signed in";
+ document.getElementById("userLabel").textContent="Welcome!";
 }
 
 async function loadApp(user){
@@ -121,14 +135,12 @@ async function loadApp(user){
  document.getElementById("app").classList.remove("hidden");
  document.getElementById("logoutBtn").classList.remove("hidden");
  document.getElementById("userLabel").textContent=user.email;
- await loadProfile();
- await loadFeed();
- await loadPeople();
+ await Promise.all([loadProfile(),loadFeed(),loadPeople()]);
 }
 
 async function loadProfile(){
  const {data,error}=await db.from("profiles").select("*").eq("id",currentUser.id).single();
- if(error){message("profileMessage",error.message);return;}
+ if(error)return msg("profileMessage",error.message);
  document.getElementById("fullName").value=data.full_name||"";
  document.getElementById("bio").value=data.bio||"";
 }
@@ -138,77 +150,99 @@ async function saveProfile(){
   full_name:document.getElementById("fullName").value.trim(),
   bio:document.getElementById("bio").value.trim()
  }).eq("id",currentUser.id);
- message("profileMessage",error?error.message:"Profile updated!");
+ msg("profileMessage",error?error.message:"Profile updated!");
 }
 
 async function createPost(){
  const file=document.getElementById("photo").files[0];
  const caption=document.getElementById("caption").value.trim();
- if(!file)return message("postMessage","Choose a photo first.");
- if(!file.type.startsWith("image/"))return message("postMessage","Please choose an image.");
- if(file.size>5*1024*1024)return message("postMessage","Image must be under 5 MB.");
- message("postMessage","Uploading image...");
+ if(!file)return msg("postMessage","Please choose an image.");
+ if(!file.type.startsWith("image/"))return msg("postMessage","Choose a valid image.");
+ if(file.size>5*1024*1024)return msg("postMessage","Image must be smaller than 5 MB.");
+
+ msg("postMessage","Uploading image...");
  const path=currentUser.id+"/"+crypto.randomUUID()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
  const {error:uploadError}=await db.storage.from("post-images").upload(path,file,{contentType:file.type});
- if(uploadError)return message("postMessage",uploadError.message);
+ if(uploadError)return msg("postMessage",uploadError.message);
+
  const {data:urlData}=db.storage.from("post-images").getPublicUrl(path);
  const {error}=await db.from("posts").insert({
   user_id:currentUser.id,image_url:urlData.publicUrl,caption
  });
- if(error)return message("postMessage",error.message);
+ if(error)return msg("postMessage",error.message);
+
  document.getElementById("photo").value="";
  document.getElementById("caption").value="";
- message("postMessage","Your post is published!");
+ msg("postMessage","Your post is live! 🎉");
  await loadFeed();
 }
 
 async function loadFeed(){
  const feed=document.getElementById("feed");
- feed.innerHTML="<p>Loading posts...</p>";
+ feed.textContent="Loading posts...";
  const {data:posts,error}=await db.from("posts")
-  .select("id,user_id,image_url,caption,created_at,profiles(username,full_name)")
-  .order("created_at",{ascending:false}).limit(50);
+ .select("id,user_id,image_url,caption,created_at,profiles(username,full_name)")
+ .order("created_at",{ascending:false}).limit(50);
+
  if(error){feed.textContent=error.message;return;}
- if(!posts.length){feed.innerHTML="<p>No posts yet. Be the first to share!</p>";return;}
+ if(!posts.length){feed.textContent="No posts yet. Be the first to share!";return;}
+
  feed.innerHTML="";
  for(const post of posts){
-  const [{data:likes},{data:comments},{data:myLike}] = await Promise.all([
+  const [likesResult,commentsResult,likeResult]=await Promise.all([
    db.from("likes").select("user_id").eq("post_id",post.id),
    db.from("comments").select("id,content,user_id,created_at,profiles(username)").eq("post_id",post.id).order("created_at"),
    db.from("likes").select("post_id").eq("post_id",post.id).eq("user_id",currentUser.id).maybeSingle()
   ]);
-  const liked=!!myLike;
-  const commentsHtml=(comments||[]).map(c=>
-   `<div class="comment"><b>${safe(c.profiles?.username||"user")}</b>: ${safe(c.content)}</div>`
+
+  if(likesResult.error||commentsResult.error||likeResult.error){
+   feed.textContent="Could not load interactions. Check database permissions.";
+   return;
+  }
+
+  const likes=likesResult.data||[];
+  const comments=commentsResult.data||[];
+  const liked=!!likeResult.data;
+  const commentsHtml=comments.map(c=>
+   `<div class="comment"><b>@${safe(c.profiles?.username||"user")}</b> ${safe(c.content)}</div>`
   ).join("");
+
   const card=document.createElement("article");
   card.className="card";
   card.innerHTML=`
-   <div class="posthead"><b>@${safe(post.profiles?.username||"user")}</b>
-   <span class="muted">${new Date(post.created_at).toLocaleDateString()}</span></div>
+   <div class="posthead">
+    <b>@${safe(post.profiles?.username||"user")}</b>
+    <span class="muted">${new Date(post.created_at).toLocaleDateString()}</span>
+   </div>
    <img class="postimg" src="${safe(post.image_url)}" alt="Post image">
    <p>${safe(post.caption)}</p>
    <div class="actions">
-    <button class="secondary" onclick="toggleLike('${post.id}',${liked})">${liked?"♥ Liked":"♡ Like"} (${likes?.length||0})</button>
-    ${post.user_id===currentUser.id?`<button class="secondary" onclick="deletePost('${post.id}')">Delete</button>`:""}
+    <button class="secondary" data-like>${liked?"♥ Liked":"♡ Like"} (${likes.length})</button>
+    ${post.user_id===currentUser.id?'<button class="secondary" data-delete>Delete</button>':""}
    </div>
    <div>${commentsHtml}</div>
-   <div class="actions"><input id="comment-${post.id}" placeholder="Write a comment...">
-   <button onclick="addComment('${post.id}')">Comment</button></div>`;
+   <div class="actions">
+    <input data-comment placeholder="Write a comment...">
+    <button data-send>Comment</button>
+   </div>`;
+
+  card.querySelector("[data-like]").onclick=()=>toggleLike(post.id,liked);
+  const del=card.querySelector("[data-delete]");
+  if(del)del.onclick=()=>deletePost(post.id);
+  card.querySelector("[data-send]").onclick=()=>addComment(post.id,card.querySelector("[data-comment]"));
   feed.appendChild(card);
  }
 }
 
 async function toggleLike(postId,liked){
  const result=liked
-  ?await db.from("likes").delete().eq("post_id",postId).eq("user_id",currentUser.id)
-  :await db.from("likes").insert({post_id:postId,user_id:currentUser.id});
- if(result.error)alert(result.error.message);
+ ?await db.from("likes").delete().eq("post_id",postId).eq("user_id",currentUser.id)
+ :await db.from("likes").insert({post_id:postId,user_id:currentUser.id});
+ if(result.error)return alert(result.error.message);
  await loadFeed();
 }
 
-async function addComment(postId){
- const input=document.getElementById("comment-"+postId);
+async function addComment(postId,input){
  const content=input.value.trim();
  if(!content)return;
  const {error}=await db.from("comments").insert({
@@ -226,37 +260,44 @@ async function deletePost(postId){
 }
 
 async function loadPeople(){
- const {data,error}=await db.from("profiles").select("id,username,full_name")
-  .neq("id",currentUser.id).limit(20);
  const box=document.getElementById("people");
+ const {data,error}=await db.from("profiles").select("id,username,full_name")
+ .neq("id",currentUser.id).limit(20);
  if(error){box.textContent=error.message;return;}
  box.innerHTML="";
  for(const person of data){
-  const {data:following}=await db.from("follows").select("following_id")
-   .eq("follower_id",currentUser.id).eq("following_id",person.id).maybeSingle();
-  const line=document.createElement("p");
-  line.innerHTML=`<b>@${safe(person.username)}</b> `;
+  const {data:following,error:followError}=await db.from("follows")
+  .select("following_id").eq("follower_id",currentUser.id)
+  .eq("following_id",person.id).maybeSingle();
+  if(followError){box.textContent=followError.message;return;}
+
+  const line=document.createElement("div");
+  line.className="person";
+  const name=document.createElement("b");
+  name.textContent="@"+person.username;
   const btn=document.createElement("button");
   btn.className="secondary";
   btn.textContent=following?"Following":"Follow";
   btn.onclick=()=>toggleFollow(person.id,!!following);
-  line.appendChild(btn);box.appendChild(line);
+  line.append(name,btn);
+  box.appendChild(line);
  }
 }
 
 async function toggleFollow(id,following){
  const result=following
-  ?await db.from("follows").delete().eq("follower_id",currentUser.id).eq("following_id",id)
-  :await db.from("follows").insert({follower_id:currentUser.id,following_id:id});
- if(result.error)alert(result.error.message);
+ ?await db.from("follows").delete().eq("follower_id",currentUser.id).eq("following_id",id)
+ :await db.from("follows").insert({follower_id:currentUser.id,following_id:id});
+ if(result.error)return alert(result.error.message);
  await loadPeople();
 }
 
 db.auth.onAuthStateChange((event,session)=>{
- if(session?.user && !currentUser) loadApp(session.user);
+ if(session?.user&&!currentUser)loadApp(session.user);
 });
 (async()=>{
- const {data}=await db.auth.getSession();
+ const {data,error}=await db.auth.getSession();
+ if(error){msg("authMessage",error.message);return;}
  if(data.session)await loadApp(data.session.user);
 })();
 </script>
