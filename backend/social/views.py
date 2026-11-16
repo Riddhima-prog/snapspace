@@ -6,10 +6,12 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.crypto import get_random_string
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics,permissions,status,viewsets
+from django.db.models import Q, Max
+from django.utils import timezone
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Profile,Post,Like,Comment,Follow,Notification
+from .models import Profile,Post,Like,Comment,Follow,Notification,DirectMessage
 from .serializers import RegisterSerializer,ProfileSerializer,PostSerializer,CommentSerializer,NotificationSerializer
 from .permissions import IsOwnerOrReadOnly
 User=get_user_model()
@@ -81,6 +83,11 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class=PostSerializer
     permission_classes=[permissions.IsAuthenticated,IsOwnerOrReadOnly]
     queryset=Post.objects.select_related("user","user__profile").all()
+    def get_queryset(self):
+        user=self.request.user
+        if not user.is_authenticated: return Post.objects.none()
+        visible_profiles=Profile.objects.filter(Q(is_private=False)|Q(user=user)|Q(user__follower_edges__follower=user,user__follower_edges__status="accepted"))
+        return Post.objects.filter(user__profile__in=visible_profiles).select_related("user","user__profile").distinct()
     http_method_names=["get","post","delete","head","options"]
     def perform_create(self,serializer): serializer.save(user=self.request.user)
     @action(detail=True,methods=["post"])
@@ -107,12 +114,57 @@ class FollowView(APIView):
     def post(self,request,user_id):
         if str(request.user.id)==str(user_id): return Response({"detail":"You cannot follow yourself."},status=400)
         target=generics.get_object_or_404(User,pk=user_id)
-        Follow.objects.get_or_create(follower=request.user,following=target)
-        Notification.objects.get_or_create(recipient=target,actor=request.user,type="follow",post=None)
-        return Response({"following":True})
+        profile=target.profile
+        edge,created=Follow.objects.get_or_create(follower=request.user,following=target,defaults={"status":"pending" if profile.is_private else "accepted"})
+        if not created and edge.status=="pending" and not profile.is_private:
+            edge.status="accepted"; edge.save(update_fields=["status"])
+        if edge.status=="accepted":
+            Notification.objects.get_or_create(recipient=target,actor=request.user,type="follow",post=None)
+        return Response({"following":edge.status=="accepted","requested":edge.status=="pending"})
     def delete(self,request,user_id):
         Follow.objects.filter(follower=request.user,following_id=user_id).delete()
         return Response(status=204)
+
+class FollowRequestsView(APIView):
+    def get(self,request):
+        qs=Follow.objects.filter(following=request.user,status="pending").select_related("follower","follower__profile")
+        return Response([{"user":str(x.follower_id),"username":x.follower.profile.username} for x in qs])
+    def post(self,request,user_id):
+        edge=generics.get_object_or_404(Follow,follower_id=user_id,following=request.user,status="pending")
+        edge.status="accepted"; edge.save(update_fields=["status"])
+        Notification.objects.get_or_create(recipient=edge.following,actor=edge.follower,type="follow",post=None)
+        return Response({"accepted":True})
+    def delete(self,request,user_id):
+        Follow.objects.filter(follower_id=user_id,following=request.user,status="pending").delete()
+        return Response(status=204)
+
+class MessagesView(APIView):
+    def get(self,request):
+        qs=DirectMessage.objects.filter(Q(sender=request.user)|Q(recipient=request.user)).select_related("sender","sender__profile","recipient","recipient__profile").order_by("-created_at")
+        seen=set(); rows=[]
+        for msg in qs:
+            other=msg.recipient if msg.sender_id==request.user.id else msg.sender
+            if other.id in seen: continue
+            seen.add(other.id)
+            rows.append({"user":str(other.id),"username":other.profile.username,"last_message":msg.content,"created_at":msg.created_at})
+        return Response(rows)
+    def post(self,request,user_id):
+        target=generics.get_object_or_404(User,pk=user_id)
+        if target==request.user: return Response({"detail":"You cannot message yourself."},status=400)
+        if target.profile.is_private and not Follow.objects.filter(follower=request.user,following=target,status="accepted").exists():
+            return Response({"detail":"This is a private account. Follow and wait for approval before messaging."},status=403)
+        content=(request.data.get("content") or "").strip()
+        if not content: return Response({"detail":"Message cannot be empty."},status=400)
+        if len(content)>2000: return Response({"detail":"Message is too long (maximum 2000 characters)."},status=400)
+        msg=DirectMessage.objects.create(sender=request.user,recipient=target,content=content)
+        return Response({"id":str(msg.id),"content":msg.content,"sender":str(msg.sender_id),"created_at":msg.created_at},status=201)
+    def put(self,request,user_id):
+        target=generics.get_object_or_404(User,pk=user_id)
+        if target.profile.is_private and not Follow.objects.filter(follower=request.user,following=target,status="accepted").exists():
+            return Response({"detail":"Follow approval is required to message this private account."},status=403)
+        DirectMessage.objects.filter(sender=target,recipient=request.user,read_at__isnull=True).update(read_at=timezone.now())
+        qs=DirectMessage.objects.filter(Q(sender=request.user,recipient=target)|Q(sender=target,recipient=request.user)).select_related("sender").order_by("created_at")
+        return Response([{"id":str(x.id),"content":x.content,"sender":str(x.sender_id),"created_at":x.created_at,"mine":x.sender_id==request.user.id} for x in qs])
 class NotificationList(generics.ListAPIView):
     serializer_class=NotificationSerializer
     def get_queryset(self): return Notification.objects.filter(recipient=self.request.user).select_related("actor","actor__profile")[:100]
