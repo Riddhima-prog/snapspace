@@ -113,7 +113,7 @@ async function signup(){
  }
  const {data,error}=await db.auth.signUp({
   email,password,
-  options:{data:{username,full_name:username}}
+  options:{data:{username,full_name:username},emailRedirectTo:window.location.origin+window.location.pathname}
  });
  if(error)return msg("authMessage",friendlyAuthError(error));
  if(data.session){
