@@ -55,5 +55,5 @@ async function followUser(id,btn){try{await api('/people/'+id+'/follow/',{method
 async function loadNotifications(){try{const a=await api('/notifications/');$('notificationsList').innerHTML=a.map(n=>'<p><b>@'+esc(n.actor?.profile?.username||'member')+'</b> '+esc(n.type)+'d with you <span class="muted tiny">'+new Date(n.created_at).toLocaleString()+'</span></p>').join('')||'<p class="muted">No notifications yet.</p>'}catch(e){$('notificationsList').textContent=e.message}}
 async function loadProfile(){ $('profileCard').innerHTML='<h2>@'+esc(me.username)+'</h2><p class="muted">'+esc(me.full_name||'')+'</p><p>'+esc(me.bio||'Add a bio to tell your story.')+'</p><button class="btn secondary" onclick="editProfile()">Edit profile</button>'}
 async function editProfile(){const full_name=prompt('Your name',me.full_name||'');if(full_name===null)return;const bio=prompt('Your bio',me.bio||'');if(bio===null)return;try{me=await api('/me/',{method:'PATCH',body:JSON.stringify({full_name,bio})});loadProfile()}catch(e){alert(e.message)}}
-if(token)boot();else{showAuth();authMode()}
+if(resetUid&&resetToken){}else if(token)boot();else{showAuth();authMode()}
 </script></body></html>
