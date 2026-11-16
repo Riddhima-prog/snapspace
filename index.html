@@ -91,6 +91,18 @@ function safe(v){
 }
 function msg(id,t){document.getElementById(id).textContent=t;}
 
+function friendlyAuthError(error){
+ const message=String(error?.message||"Something went wrong.");
+ const lower=message.toLowerCase();
+ if(lower.includes("rate limit")||lower.includes("too many")){
+  return "Email sending is temporarily rate-limited. Please stop retrying and try again later.";
+ }
+ if(lower.includes("invalid login credentials")){
+  return "Login failed. If you just created this account, confirm your email first. If no email arrived, wait for the email limit to reset before requesting another.";
+ }
+ return message;
+}
+
 async function signup(){
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("password").value;
@@ -103,7 +115,7 @@ async function signup(){
   email,password,
   options:{data:{username,full_name:username}}
  });
- if(error)return msg("authMessage",error.message);
+ if(error)return msg("authMessage",friendlyAuthError(error));
  if(data.session){
   msg("authMessage","Account created!");
   await loadApp(data.user);
