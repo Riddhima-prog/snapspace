@@ -18,10 +18,11 @@ class RegisterSerializer(serializers.Serializer):
         Profile.objects.create(user=user,username=data["username"])
         return user
 class ProfileSerializer(serializers.ModelSerializer):
+    user=serializers.UUIDField(source="user_id",read_only=True)
     class Meta:
         model=Profile
-        fields=["username","full_name","bio","avatar_url","created_at"]
-        read_only_fields=["created_at"]
+        fields=["user","username","full_name","bio","avatar_url","created_at"]
+        read_only_fields=["user","created_at"]
 class UserSummarySerializer(serializers.ModelSerializer):
     profile=ProfileSerializer(read_only=True)
     class Meta:
